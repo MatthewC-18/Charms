@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eefdfd"/>
+      <stop offset="100%" stop-color="#f9f1e7"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6ee3ec"/>
+      <stop offset="100%" stop-color="#14b8c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1010" cy="150" r="180" fill="#a9f0f5" opacity="0.45"/>
+  <circle cx="150" cy="560" r="140" fill="#ff6b6b" opacity="0.15"/>
+
+  <g transform="translate(90 150)">
+    <circle cx="44" cy="44" r="44" fill="url(#ring)"/>
+    <circle cx="44" cy="44" r="37" fill="#eefdfd"/>
+    <path d="M18 56c9-1.5 12-10 21-10 7 0 9 6 16 6 6 0 9-3 12-6 1.5 10-6 19-16 19-6 0-9-3-15-3s-12 3-18-6Z" fill="#14b8c4"/>
+    <circle cx="36" cy="36" r="4" fill="#117585"/>
+  </g>
+
+  <text x="200" y="205" font-family="Trebuchet MS, sans-serif" font-size="46" font-weight="bold" fill="#14202b">Charms Ecuador</text>
+  <text x="200" y="245" font-family="Trebuchet MS, sans-serif" font-size="24" font-weight="bold" fill="#0e93a3" letter-spacing="3">PORCELANA FRÍA · HECHO A MANO</text>
+
+  <text x="90" y="360" font-family="Trebuchet MS, sans-serif" font-size="66" font-weight="bold" fill="#14202b">Convertimos tus fotos en</text>
+  <text x="90" y="432" font-family="Trebuchet MS, sans-serif" font-size="66" font-weight="bold" fill="#0e93a3">figuras que duran años</text>
+
+  <text x="90" y="500" font-family="Trebuchet MS, sans-serif" font-size="28" fill="#374151">Cuadros · Retrovisor · Tazas · Llaveros · Regalos corporativos</text>
+  <rect x="90" y="530" width="330" height="60" rx="30" fill="#25d366"/>
+  <text x="255" y="569" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="26" font-weight="bold" fill="#04331a">Cotiza por WhatsApp</text>
+  <text x="450" y="569" font-family="Trebuchet MS, sans-serif" font-size="24" fill="#6b7280">Envíos a todo el Ecuador</text>
+</svg>

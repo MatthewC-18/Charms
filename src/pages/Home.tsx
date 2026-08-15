@@ -1,0 +1,338 @@
+import { Link } from 'react-router-dom'
+import Icon from '../components/Icon'
+import PieceArt from '../components/PieceArt'
+import ProductCard from '../components/ProductCard'
+import { categories, categoryPriceFrom, products } from '../data/products'
+import { faqs, logistics, occasions, site, steps, testimonials, trustStats, waUrl } from '../data/site'
+import { money } from '../lib/quote'
+
+const differentiators = [
+  {
+    icon: 'sketch' as const,
+    title: 'Boceto antes de producir',
+    text: 'Apruebas cómo va a quedar antes de que empecemos. Si algo no te convence, se ajusta sin costo.',
+  },
+  {
+    icon: 'camera' as const,
+    title: 'Fotos reales antes del envío',
+    text: 'Te mandamos fotos de tu pieza terminada. Recién ahí sale del taller.',
+  },
+  {
+    icon: 'shield' as const,
+    title: 'Empaque anti-golpes',
+    text: 'Caja rígida, espuma y sellado. Si llega dañada por el transporte, la reponemos.',
+  },
+  {
+    icon: 'truck' as const,
+    title: 'Envíos a las 24 provincias',
+    text: 'Entrega a domicilio en Quito y courier con número de guía al resto del país.',
+  },
+]
+
+export default function Home() {
+  const populares = products.filter((p) => p.popular).slice(0, 4)
+
+  return (
+    <>
+      {/* ---------------- HERO ---------------- */}
+      <section className="bg-porcelain relative overflow-hidden">
+        <div className="container-x grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
+          <div>
+            <span className="chip bg-white text-brand-700 shadow-[var(--shadow-soft)]">
+              <Icon name="sparkles" className="h-4 w-4" /> Porcelana fría · hecho a mano en Ecuador
+            </span>
+
+            <h1 className="mt-5 text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+              Convertimos tus fotos en
+              <span className="text-brand-600"> figuras que se quedan para siempre</span>
+            </h1>
+
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-700">
+              Cuadros, piezas para el retrovisor, tazas y reconocimientos modelados figura por figura, con
+              el parecido de cada persona, sus mascotas y la frase que quieras decirles.
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link to="/personalizar" className="btn btn-primary text-base">
+                Cotiza tu pieza en 1 minuto
+                <Icon name="arrow" className="h-5 w-5" />
+              </Link>
+              <Link to="/catalogo" className="btn btn-ghost text-base">
+                Ver catálogo
+              </Link>
+            </div>
+
+            <dl className="mt-10 grid max-w-lg grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+              {trustStats.map((s) => (
+                <div key={s.label}>
+                  <dt className="text-2xl font-extrabold text-brand-700">{s.value}</dt>
+                  <dd className="text-xs font-semibold leading-tight text-ink-500">{s.label}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="relative">
+            <div className="card anim-float overflow-hidden rounded-[var(--radius-blob)]">
+              <PieceArt art="swing" label="Cuadro columpio personalizado" className="w-full" />
+            </div>
+            <div className="card absolute -bottom-6 -left-2 w-40 overflow-hidden rounded-3xl sm:-left-8 sm:w-52">
+              <PieceArt art="car" label="Pieza para retrovisor" className="w-full" />
+            </div>
+            <div className="card absolute -right-2 -top-6 w-36 overflow-hidden rounded-3xl sm:-right-6 sm:w-44">
+              <PieceArt art="standing" label="Figura de profesión" className="w-full" />
+            </div>
+            <div className="card absolute -bottom-10 right-4 flex items-center gap-2 rounded-full px-4 py-2.5">
+              <Icon name="heart" className="h-4 w-4 text-coral-500" />
+              <span className="text-xs font-extrabold text-ink-900">+900 piezas entregadas</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- CATEGORÍAS ---------------- */}
+      <section className="container-x py-16">
+        <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-3xl sm:text-4xl">¿Qué quieres regalar?</h2>
+            <p className="mt-2 text-ink-500">Seis formatos base. Todos se personalizan por completo.</p>
+          </div>
+          <Link to="/catalogo" className="btn btn-ghost text-sm">
+            Ver todo el catálogo <Icon name="arrow" className="h-4 w-4" />
+          </Link>
+        </header>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c) => (
+            <Link
+              key={c.id}
+              to={`/catalogo?cat=${c.id}`}
+              className="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
+            >
+              <div className="aspect-[5/3] overflow-hidden bg-clay-100">
+                <PieceArt art={c.art} label={c.name} className="h-full w-full transition duration-500 group-hover:scale-105" />
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-lg font-extrabold">{c.name}</h3>
+                  <span className="chip bg-brand-100 text-brand-800">desde {money(categoryPriceFrom(c.id))}</span>
+                </div>
+                <p className="mt-1.5 text-sm text-ink-500">{c.short}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- MÁS PEDIDOS ---------------- */}
+      <section className="bg-white py-16">
+        <div className="container-x">
+          <header className="mb-8">
+            <h2 className="text-3xl sm:text-4xl">Los más pedidos</h2>
+            <p className="mt-2 text-ink-500">
+              Lo que más sale del taller cada mes. Los precios son referenciales y se cierran contigo por
+              WhatsApp.
+            </p>
+          </header>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {populares.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- PROCESO ---------------- */}
+      <section className="container-x py-16">
+        <header className="mb-10 text-center">
+          <span className="chip bg-brand-100 text-brand-800">Del chat a tu casa</span>
+          <h2 className="mt-3 text-3xl sm:text-4xl">Cómo se hace tu pieza</h2>
+          <p className="mx-auto mt-2 max-w-2xl text-ink-500">
+            Un proceso claro, sin sorpresas: apruebas el boceto, ves fotos reales antes del envío y sabes
+            exactamente cuándo llega.
+          </p>
+        </header>
+
+        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {steps.map((s) => (
+            <li key={s.n} className="card relative p-6">
+              <span className="absolute -top-3 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
+                {s.n}
+              </span>
+              <Icon name={s.icon} className="mt-2 h-7 w-7 text-brand-600" />
+              <h3 className="mt-3 text-lg font-extrabold">{s.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 rounded-3xl bg-brand-50 p-6 text-center">
+          <p className="text-sm font-semibold text-brand-800">
+            Producción normal: <strong>{logistics.productionDays}</strong> · Express:{' '}
+            <strong>{logistics.rushDays}</strong> (+{logistics.rushSurchargePct}%)
+          </p>
+          <Link to="/como-funciona" className="btn btn-ghost text-sm">
+            Ver detalles y envíos
+          </Link>
+        </div>
+      </section>
+
+      {/* ---------------- OCASIONES ---------------- */}
+      <section className="bg-white py-16">
+        <div className="container-x">
+          <header className="mb-6">
+            <h2 className="text-3xl sm:text-4xl">Para cada ocasión</h2>
+            <p className="mt-2 text-ink-500">Filtra el catálogo por el momento que quieres celebrar.</p>
+          </header>
+          <div className="flex flex-wrap gap-2.5">
+            {occasions.map((o) => (
+              <Link
+                key={o.id}
+                to={`/catalogo?oc=${o.id}`}
+                className="chip border-2 border-clay-200 bg-white px-4 py-2.5 text-sm text-ink-700 transition hover:border-brand-300 hover:text-brand-700"
+              >
+                <span aria-hidden>{o.emoji}</span> {o.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- DIFERENCIADORES ---------------- */}
+      <section className="container-x py-16">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {differentiators.map((d) => (
+            <div key={d.title} className="card p-6">
+              <span className="inline-flex rounded-2xl bg-brand-100 p-3 text-brand-700">
+                <Icon name={d.icon} className="h-6 w-6" />
+              </span>
+              <h3 className="mt-4 text-lg font-extrabold">{d.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{d.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- TESTIMONIOS ---------------- */}
+      <section className="bg-white py-16">
+        <div className="container-x">
+          <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-4xl">Clientes felices</h2>
+              <p className="mt-2 text-ink-500">Lo que nos escriben cuando abren la caja.</p>
+            </div>
+            <a href={site.instagramUrl} target="_blank" rel="noreferrer" className="btn btn-ghost text-sm">
+              <Icon name="instagram" className="h-4 w-4" /> @{site.instagram}
+            </a>
+          </header>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {testimonials.map((t) => (
+              <figure key={t.name} className="card flex flex-col p-6">
+                <div className="flex gap-0.5 text-coral-500">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="star" className="h-4 w-4" />
+                  ))}
+                </div>
+                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">“{t.text}”</blockquote>
+                <figcaption className="mt-4 border-t border-clay-200 pt-3">
+                  <span className="block text-sm font-extrabold text-ink-900">
+                    {t.name} · {t.city}
+                  </span>
+                  <span className="text-xs text-ink-500">{t.piece}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- EMPRESAS ---------------- */}
+      <section className="container-x py-16">
+        <div className="grid items-center gap-8 overflow-hidden rounded-[var(--radius-blob)] bg-ink-900 p-8 text-white sm:p-12 lg:grid-cols-2">
+          <div>
+            <span className="chip bg-white/10 text-brand-200">
+              <Icon name="building" className="h-4 w-4" /> Regalos corporativos
+            </span>
+            <h2 className="mt-4 text-3xl text-white sm:text-4xl">
+              Reconocimientos que nadie deja en el cajón
+            </h2>
+            <p className="mt-3 max-w-lg text-white/70">
+              Figuras con el uniforme de tu empresa, logotipo modelado en relieve y placa con nombre y años
+              de servicio. Desde 10 unidades, con cronograma de entrega y factura.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to="/empresas" className="btn btn-primary">
+                Ver plan corporativo <Icon name="arrow" className="h-5 w-5" />
+              </Link>
+              <a
+                href={waUrl('¡Hola Charms! Necesito una cotización corporativa por volumen.')}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-wa"
+              >
+                <Icon name="whatsapp" className="h-5 w-5" /> Cotizar por volumen
+              </a>
+            </div>
+          </div>
+          <div className="card overflow-hidden rounded-3xl">
+            <PieceArt art="plaque" label="Placa de reconocimiento corporativo" className="w-full" />
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- FAQ CORTO ---------------- */}
+      <section className="bg-white py-16">
+        <div className="container-x grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <h2 className="text-3xl sm:text-4xl">Dudas rápidas</h2>
+            <p className="mt-2 text-ink-500">
+              Las tres que más nos preguntan. El resto está en la página de ayuda.
+            </p>
+            <Link to="/como-funciona#faq" className="btn btn-ghost mt-5 text-sm">
+              Ver todas las preguntas
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {faqs.slice(0, 3).map((f) => (
+              <details key={f.q} className="card group p-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-extrabold text-ink-900">
+                  {f.q}
+                  <Icon name="plus" className="h-5 w-5 shrink-0 text-brand-600 group-open:hidden" />
+                  <Icon name="minus" className="hidden h-5 w-5 shrink-0 text-brand-600 group-open:block" />
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-ink-500">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- CTA FINAL ---------------- */}
+      <section className="container-x py-16">
+        <div className="bg-porcelain card flex flex-col items-center gap-5 rounded-[var(--radius-blob)] p-10 text-center">
+          <h2 className="max-w-2xl text-3xl sm:text-4xl">
+            Mándanos la foto y te decimos hoy mismo cuánto cuesta
+          </h2>
+          <p className="max-w-xl text-ink-500">
+            Cotizar no cuesta nada y no te compromete. Respondemos en horario de atención:{' '}
+            {site.hours}.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href={waUrl('¡Hola Charms! Quiero cotizar una pieza personalizada 😊')}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-wa text-base"
+            >
+              <Icon name="whatsapp" className="h-5 w-5" /> Escribir por WhatsApp
+            </a>
+            <Link to="/personalizar" className="btn btn-primary text-base">
+              Armar mi pieza <Icon name="arrow" className="h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}

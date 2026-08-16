@@ -13,6 +13,7 @@ import {
   steps,
   testimonials,
   trustStats,
+  videos,
   waUrl,
 } from '../data/site'
 import { money } from '../lib/quote'
@@ -51,7 +52,15 @@ export default function Home() {
     <>
       {/* ---------------- HERO ---------------- */}
       <section className="bg-tornasol relative overflow-hidden">
-        <div className="container-x grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
+        {/* Sello de marca: la cola de sirena del logo, como marca de agua */}
+        <img
+          src="./marca/cola-sirena.webp"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-16 -left-24 w-[26rem] opacity-15 sm:-left-16 lg:w-[34rem]"
+        />
+
+        <div className="container-x relative grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
           <div>
             <span className="chip bg-white text-brand-800 shadow-[var(--shadow-soft)]">
               <Icon name="sparkles" className="h-4 w-4 text-lila-400" /> Porcelana fría · hecho a mano en
@@ -86,6 +95,21 @@ export default function Home() {
                 </div>
               ))}
             </dl>
+
+            {/* Charmy recibe a quien entra, al costado del texto (no encima de las fotos) */}
+            <div className="mt-8">
+              <Mascota
+                variant="hola"
+                className="w-24 sm:w-28"
+                burbujaPos="lado"
+                burbuja={
+                  <>
+                    ¡Hola! Soy {site.mascota.name}. Cuéntame a quién quieres regalar
+                    <span aria-hidden> 💙</span>
+                  </>
+                }
+              />
+            </div>
           </div>
 
           <div className="relative">
@@ -105,20 +129,6 @@ export default function Home() {
                 alt="Pieza de retrovisor con una pareja sobre su auto"
                 className="w-full object-cover"
                 loading="lazy"
-              />
-            </div>
-
-            {/* Mascota: el avatar de la dueña recibe a quien entra */}
-            <div className="absolute -right-2 -top-4 hidden sm:block">
-              <Mascota
-                variant="hola"
-                className="w-28 lg:w-36"
-                burbuja={
-                  <>
-                    ¡Hola! Cuéntame a quién quieres regalar
-                    <span aria-hidden> 💙</span>
-                  </>
-                }
               />
             </div>
 
@@ -214,7 +224,7 @@ export default function Home() {
           </header>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {galeria.map((g) => (
+            {galeria.slice(0, 15).map((g) => (
               <figure
                 key={g.src}
                 className="group relative overflow-hidden rounded-2xl border border-clay-200 bg-white shadow-[var(--shadow-soft)]"
@@ -233,6 +243,90 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---------------- QUIÉN HACE LAS PIEZAS ---------------- */}
+      <section className="container-x py-16">
+        <div className="card bg-tornasol relative overflow-hidden rounded-[var(--radius-blob)]">
+          <img
+            src="./marca/cola-sirena.webp"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-14 -top-12 w-72 opacity-20"
+          />
+          <div className="relative grid items-center gap-8 p-8 sm:p-12 lg:grid-cols-[1fr_1fr]">
+            <div>
+              <span className="chip bg-white text-brand-800">
+                <Icon name="hands" className="h-4 w-4" /> Detrás del taller
+              </span>
+              <h2 className="mt-4 text-3xl sm:text-4xl">Una sola artista detrás de cada pieza</h2>
+              <p className="mt-3 text-ink-700">
+                {site.mascota.name} no es un personaje inventado: es {site.mascota.rol}, la misma persona
+                que modela, pinta, empaca y te responde el WhatsApp. Por eso cada pedido pasa por boceto y
+                por foto antes de salir.
+              </p>
+              <div className="mt-6 flex items-center gap-4">
+                <Mascota variant="listo" className="w-20" quieta />
+                <p className="text-sm font-bold text-brand-800">
+                  Del primer mensaje a la entrega, siempre hablas con la misma persona.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <img
+                src="./productos/taller-artista.webp"
+                alt="La artista de Charms junto a un lote de figuras empacadas"
+                loading="lazy"
+                className="aspect-[3/4] w-full rounded-3xl border border-white/60 object-cover shadow-[var(--shadow-soft)]"
+              />
+              <img
+                src="./productos/taller-produccion.webp"
+                alt="Mesa de trabajo con decenas de figuras corporativas en producción"
+                loading="lazy"
+                className="mt-8 aspect-[3/4] w-full rounded-3xl border border-white/60 object-cover shadow-[var(--shadow-soft)]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- VIDEOS DEL TALLER ---------------- */}
+      {videos.length > 0 && (
+        <section className="bg-white py-16">
+          <div className="container-x">
+            <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl sm:text-4xl">Así se hace</h2>
+                <p className="mt-2 max-w-xl text-ink-500">
+                  Sin moldes ni impresión 3D: cada figura se modela a mano, pieza por pieza.
+                </p>
+              </div>
+              <a href={site.atomBioUrl} target="_blank" rel="noreferrer" className="btn btn-ghost text-sm">
+                Ver todos nuestros enlaces
+              </a>
+            </header>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {videos.map((v) => (
+                <figure key={v.src} className="card overflow-hidden">
+                  <video
+                    className="aspect-[9/16] w-full bg-clay-100 object-cover"
+                    src={v.src}
+                    poster={v.poster}
+                    controls
+                    playsInline
+                    preload="none"
+                  />
+                  <figcaption className="p-4">
+                    <h3 className="font-extrabold text-ink-900">{v.titulo}</h3>
+                    {v.descripcion && <p className="mt-1 text-sm text-ink-500">{v.descripcion}</p>}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---------------- PROCESO ---------------- */}
       <section className="container-x py-16">

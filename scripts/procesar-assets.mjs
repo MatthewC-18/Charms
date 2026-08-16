@@ -123,6 +123,39 @@ const comandos = {
     console.log('✓ logo')
   },
 
+  /**
+   * Cola de sirena sola (sin el lettering), para usarla como sello decorativo.
+   * Borra el bloque donde va la palabra "Charms" y recorta el sobrante.
+   */
+  async cola(ruta = path.join(OUT_MARCA, 'logo-charms-transparente.webp')) {
+    ensure(OUT_MARCA)
+    const meta = await sharp(ruta).metadata()
+    const { data, info } = await sharp(ruta).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+
+    // Región del lettering, en proporción del alto/ancho del original
+    const x0 = Math.round(info.width * 0.45)
+    const y0 = Math.round(info.height * 0.31)
+    const y1 = Math.round(info.height * 0.6)
+
+    for (let y = y0; y < y1; y++) {
+      for (let x = x0; x < info.width; x++) {
+        data[(y * info.width + x) * info.channels + 3] = 0
+      }
+    }
+
+    await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+      .png()
+      .toFile(path.join(OUT_MARCA, 'cola-sirena.png'))
+
+    await sharp(path.join(OUT_MARCA, 'cola-sirena.png'))
+      .trim({ threshold: 1 })
+      .resize({ width: 900, withoutEnlargement: true })
+      .webp({ quality: 92 })
+      .toFile(path.join(OUT_MARCA, 'cola-sirena.webp'))
+
+    console.log('✓ cola', `${meta.width}x${meta.height}`)
+  },
+
   /** Fotos del taller: renombra a slug legible y exporta webp optimizado. */
   async fotos(dir) {
     ensure(OUT_FOTOS)
@@ -137,6 +170,25 @@ const comandos = {
       'SaveClip.App_744782115_18098590952186416_7935600480122128315_n': 'cuadro-4d-familia-mascotas',
       'SaveClip.App_747795599_18099046001186416_2531860675777610391_n': 'corporativo-pronaca',
       'SaveClip.App_754057787_18099596540186416_6141350616182761170_n': 'figura-de-pie-mujer',
+
+      // Segunda tanda (WhatsApp, 15 ago 2026)
+      'WhatsApp Image 2026-08-15 at 23.12.39': 'taza-graduacion',
+      'WhatsApp Image 2026-08-15 at 23.12.39 (1)': 'taza-feliz-retiro',
+      'WhatsApp Image 2026-08-15 at 23.12.39 (2)': 'taza-medico',
+      'WhatsApp Image 2026-08-15 at 23.12.40': 'porta-llaves-familia',
+      'WhatsApp Image 2026-08-15 at 23.12.40 (1)': 'lote-corporativo-cajas',
+      'WhatsApp Image 2026-08-15 at 23.12.40 (2)': 'cuadro-4d-familia-grande',
+      'WhatsApp Image 2026-08-15 at 23.12.41': 'retrovisor-pareja-chevrolet',
+      'WhatsApp Image 2026-08-15 at 23.12.41 (1)': 'cuadro-4d-gatos',
+      'WhatsApp Image 2026-08-15 at 23.12.42': 'cuadro-4d-familia-jardin',
+      'WhatsApp Image 2026-08-15 at 23.12.42 (1)': 'taza-mascota',
+      'WhatsApp Image 2026-08-15 at 23.12.42 (2)': 'figuras-aguacates',
+      'WhatsApp Image 2026-08-15 at 23.12.43': 'figura-odontologo',
+      'WhatsApp Image 2026-08-15 at 23.12.43 (1)': 'llaveros-personajes',
+      'WhatsApp Image 2026-08-15 at 23.12.43 (2)': 'figura-nino-mascotas',
+      'WhatsApp Image 2026-08-15 at 23.12.43 (3)': 'figura-graduacion-bebe',
+      'WhatsApp Image 2026-08-15 at 23.12.44': 'taller-artista',
+      'WhatsApp Image 2026-08-15 at 23.12.44 (1)': 'taller-produccion',
     }
 
     for (const f of readdirSync(dir)) {
@@ -150,6 +202,62 @@ const comandos = {
       console.log('✓', destino)
     }
   },
+}
+
+/**
+ * Videos del taller: reels y TikToks.
+ * Recomprime a 720p vertical con h264 (compatible con todos los navegadores)
+ * y saca una miniatura del segundo 1.
+ * Requiere ffmpeg en el PATH.
+ */
+comandos.videos = async (dir) => {
+  const { execFileSync } = await import('node:child_process')
+  const OUT_VIDEOS = 'public/videos'
+  ensure(OUT_VIDEOS)
+
+  // nombre original -> [slug de salida, segundo del que se saca la miniatura]
+  const mapa = {
+    'WhatsApp Video 2026-08-15 at 23.20.41': ['figura-dragon', 1],
+    'WhatsApp Video 2026-08-15 at 23.20.41 (1)': ['taza-mario', 1],
+    'WhatsApp Video 2026-08-15 at 23.20.42': ['cuadro-4d-detalle', 6],
+    'WhatsApp Video 2026-08-15 at 23.21.28': ['capibara-paso-a-paso', 1],
+  }
+
+  for (const f of readdirSync(dir)) {
+    const base = path.parse(f).name
+    const entrada = path.join(dir, f)
+    if (!mapa[base]) continue
+    const [destino, segundo] = mapa[base]
+
+    execFileSync(
+      'ffmpeg',
+      [
+        '-y',
+        '-i', entrada,
+        '-vf', "scale='min(720,iw)':-2",
+        '-c:v', 'libx264',
+        '-preset', 'slow',
+        '-crf', '30',
+        '-c:a', 'aac',
+        '-b:a', '96k',
+        '-movflags', '+faststart',
+        path.join(OUT_VIDEOS, `${destino}.mp4`),
+      ],
+      { stdio: 'ignore' },
+    )
+
+    execFileSync(
+      'ffmpeg',
+      ['-y', '-ss', String(segundo), '-i', entrada, '-frames:v', '1', '-vf', "scale='min(720,iw)':-2", path.join(OUT_VIDEOS, `${destino}.jpg`)],
+      { stdio: 'ignore' },
+    )
+
+    await sharp(path.join(OUT_VIDEOS, `${destino}.jpg`))
+      .webp({ quality: 78 })
+      .toFile(path.join(OUT_VIDEOS, `${destino}.webp`))
+
+    console.log('✓', destino)
+  }
 }
 
 const [cmd, arg] = process.argv.slice(2)

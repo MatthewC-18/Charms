@@ -134,8 +134,16 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="mt-24 border-t border-clay-200 bg-white">
-      <div className="container-x grid gap-10 py-14 md:grid-cols-4">
+    <footer className="relative mt-24 overflow-hidden border-t border-clay-200 bg-white">
+      {/* Sello de marca: la cola de sirena, muy tenue */}
+      <img
+        src="./marca/cola-sirena.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-16 -top-10 w-80 opacity-10 lg:w-[28rem]"
+      />
+
+      <div className="container-x relative grid gap-10 py-14 md:grid-cols-4">
         <div className="md:col-span-1">
           <Logo className="h-12" />
           <p className="mt-4 text-sm leading-relaxed text-ink-500">
@@ -159,6 +167,16 @@ function Footer() {
               className="rounded-full border-2 border-clay-200 p-2 text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
             >
               <Icon name="whatsapp" />
+            </a>
+            <a
+              href={site.atomBioUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Todos nuestros enlaces"
+              title="Todos nuestros enlaces"
+              className="rounded-full border-2 border-clay-200 p-2 text-ink-700 transition hover:border-brand-300 hover:text-brand-600"
+            >
+              <Icon name="link" />
             </a>
           </div>
         </div>

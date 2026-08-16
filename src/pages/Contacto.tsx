@@ -64,6 +64,23 @@ export default function Contacto() {
             </span>
           </a>
 
+          <a
+            href={site.atomBioUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="card flex items-center gap-4 p-6 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
+          >
+            <span className="rounded-2xl bg-lila-100 p-3 text-lila-500">
+              <Icon name="link" className="h-7 w-7" />
+            </span>
+            <span>
+              <span className="block text-lg font-extrabold">Todos nuestros enlaces</span>
+              <span className="block text-sm text-ink-500">
+                atom.bio/charms_ecuador · redes, catálogo y contacto
+              </span>
+            </span>
+          </a>
+
           <div className="card flex items-center gap-4 p-6">
             <span className="rounded-2xl bg-clay-100 p-3 text-ink-700">
               <Icon name="mail" className="h-7 w-7" />

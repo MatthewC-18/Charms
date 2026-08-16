@@ -66,6 +66,7 @@ export const categories: Category[] = [
     description:
       'Taza de cerámica intervenida a mano con una figura en porcelana fría. Uso decorativo o de uso suave: se lava a mano, no va a microondas.',
     art: 'mug',
+    photo: './productos/taza-graduacion.webp',
   },
   {
     id: 'llaveros',
@@ -74,6 +75,7 @@ export const categories: Category[] = [
     description:
       'Mini versiones para llevar contigo, y porta llaves de pared con figuras y ganchos. Ideal para recuerdos de evento y detalles pequeños.',
     art: 'keychain',
+    photo: './productos/llaveros-personajes.webp',
   },
   {
     id: 'corporativo',
@@ -119,7 +121,7 @@ export const products: Product[] = [
     category: 'retrovisor',
     art: 'car',
     photo: './productos/retrovisor-pareja-auto.webp',
-    gallery: ['./productos/retrovisor-individual.webp'],
+    gallery: ['./productos/retrovisor-pareja-chevrolet.webp', './productos/retrovisor-individual.webp'],
     blurb: 'Ustedes dos sentados sobre su carro, con la placa real.',
     description:
       'Réplica del carro de la pareja (color y modelo aproximados) con las dos figuras sentadas sobre el capó. Incluye placa con el número real del vehículo o una frase corta, y cordón para colgar del retrovisor.',
@@ -198,6 +200,11 @@ export const products: Product[] = [
     category: 'cuadros',
     art: 'frame4d',
     photo: './productos/cuadro-4d-familia-mascotas.webp',
+    gallery: [
+      './productos/cuadro-4d-familia-grande.webp',
+      './productos/cuadro-4d-familia-jardin.webp',
+      './productos/cuadro-4d-gatos.webp',
+    ],
     blurb: 'Fondo texturizado con la familia completa en relieve.',
     description:
       'Escena en relieve sobre fondo texturizado, con las figuras de cuerpo entero, nombres sobre cada una, corazones y mascotas. El formato que mejor funciona para familias de 4 o más.',
@@ -254,7 +261,7 @@ export const products: Product[] = [
     category: 'figuras',
     art: 'standing',
     photo: './productos/corporativo-pronaca.webp',
-    gallery: ['./productos/figura-de-pie-mujer.webp'],
+    gallery: ['./productos/figura-odontologo.webp', './productos/figura-de-pie-mujer.webp'],
     blurb: 'Uniforme, herramientas del oficio y base con nombre.',
     description:
       'Figura individual de pie sobre base redonda, con el uniforme y los accesorios de la profesión: bata y estetoscopio, toga y balanza, uniforme militar o policial, casco, mandil, lo que necesites.',
@@ -273,6 +280,7 @@ export const products: Product[] = [
     name: 'Figura de graduación',
     category: 'figuras',
     art: 'standing',
+    photo: './productos/figura-graduacion-bebe.webp',
     blurb: 'Toga, birrete y diploma, con la fecha del grado.',
     description:
       'Figura con toga y birrete del color de la institución, diploma en la mano y base con el nombre, la carrera y la fecha de graduación.',
@@ -308,6 +316,7 @@ export const products: Product[] = [
     name: 'Figura de mascota',
     category: 'figuras',
     art: 'standing',
+    photo: './productos/figura-nino-mascotas.webp',
     blurb: 'Tu perro o gato modelado según su pelaje real.',
     description:
       'Retrato de tu mascota en porcelana fría, trabajando manchas, textura de pelaje y color de ojos según las fotos que envíes. Base con su nombre.',
@@ -320,6 +329,27 @@ export const products: Product[] = [
     highlights: ['Pelaje trabajado a mano', 'Nombre en la base', 'También en memoriam'],
   },
 
+  {
+    id: 'p-figura-kawaii',
+    slug: 'figuras-decorativas',
+    name: 'Figuras decorativas',
+    category: 'figuras',
+    art: 'standing',
+    photo: './productos/figuras-aguacates.webp',
+    gallery: ['./productos/figura-nino-mascotas.webp'],
+    blurb: 'Personajes, parejas de frutas y piezas kawaii de repisa.',
+    description:
+      'Piezas decorativas que no son retrato: parejas de aguacates, animalitos, personajes de series y videojuegos. Se modelan igual, a mano, y funcionan como detalle pequeño o adorno de escritorio.',
+    priceFrom: 24,
+    figuresIncluded: 2,
+    extraFigure: 10,
+    extraPet: 8,
+    size: 'Alto aprox. 8 cm c/u',
+    occasions: ['aniversario', 'amistad', 'cumpleanos'],
+    highlights: ['Diseño libre', 'Ideal para repisa', 'También por encargo de personajes'],
+    isNew: true,
+  },
+
   // ---------------- TAZAS ----------------
   {
     id: 'p-taza-figura',
@@ -327,6 +357,12 @@ export const products: Product[] = [
     name: 'Taza con figura',
     category: 'tazas',
     art: 'mug',
+    photo: './productos/taza-graduacion.webp',
+    gallery: [
+      './productos/taza-feliz-retiro.webp',
+      './productos/taza-medico.webp',
+      './productos/taza-mascota.webp',
+    ],
     blurb: 'Taza cerámica con una figura modelada al frente.',
     description:
       'Taza blanca de cerámica con una figura en relieve adherida al frente y el nombre o mensaje en la parte inferior. Uso decorativo, lavado a mano.',
@@ -363,6 +399,7 @@ export const products: Product[] = [
     name: 'Llavero mini figura',
     category: 'llaveros',
     art: 'keychain',
+    photo: './productos/llaveros-personajes.webp',
     blurb: 'Versión mini para llevar en las llaves o la mochila.',
     description:
       'Mini figura de 5 cm con argolla reforzada. El más pedido como recuerdo de evento por cantidad, y como detalle pequeño de cumpleaños.',
@@ -380,6 +417,7 @@ export const products: Product[] = [
     name: 'Porta llaves de pared',
     category: 'llaveros',
     art: 'keychain',
+    photo: './productos/porta-llaves-familia.webp',
     blurb: 'Tablero con las figuras de la casa y ganchos.',
     description:
       'Tablero de madera con las figuras de quienes viven en la casa, apellido en relieve y ganchos metálicos. Regalo típico de estreno de departamento.',
@@ -418,6 +456,8 @@ export const products: Product[] = [
     name: 'Lote corporativo',
     category: 'corporativo',
     art: 'plaque',
+    photo: './productos/lote-corporativo-cajas.webp',
+    gallery: ['./productos/taller-produccion.webp'],
     blurb: 'Producción por volumen con diseño unificado.',
     description:
       'Pedido de 10 a 200 piezas con un diseño base común y personalización individual por nombre. Cotización por volumen, cronograma de entrega y factura.',

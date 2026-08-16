@@ -7,12 +7,13 @@
 | `logo-charms-transparente.webp` | Lockup completo (cola + palabra). Header y footer. |
 | `logo-charms.webp` | Versión cuadrada con fondo turquesa, tipo avatar de Instagram. |
 | `logo-charms.png` | Igual que la anterior, para favicon y apple-touch-icon. |
+| `cola-sirena.webp` | Solo la cola, sin el lettering. Sello decorativo del hero, el footer y "Detrás del taller". |
 
 Original: `assets-originales/fotos/SaveClip.App_553591692_*.jpg`.
 
-## Mascota
+## Charmy (mascota)
 
-Es el avatar 3D de la dueña del taller. Cada sticker existe en dos versiones:
+Es el avatar 3D de la dueña del taller y se llama **Charmy**. Cada sticker existe en dos versiones:
 
 | Variante | Con texto | Sin texto | Dónde se usa |
 |---|---|---|---|
@@ -30,6 +31,7 @@ escribir el mensaje en HTML y cambiarlo cuando quieras.
 ```bash
 node scripts/procesar-assets.mjs mascota assets-originales/dueña
 node scripts/procesar-assets.mjs logo assets-originales/fotos/SaveClip.App_553591692_18069330506186416_7641432740049678965_n.jpg
+node scripts/procesar-assets.mjs cola   # cola sola, a partir del logo transparente
 ```
 
 El script quita el fondo blanco/turquesa, recorta el sobrante y exporta webp.

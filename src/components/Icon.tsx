@@ -20,6 +20,7 @@ export type IconName =
   | 'plus'
   | 'minus'
   | 'building'
+  | 'link'
 
 const paths: Record<IconName, React.ReactNode> = {
   whatsapp: (
@@ -137,6 +138,15 @@ const paths: Record<IconName, React.ReactNode> = {
   ),
   plus: <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" d="M12 5v14M5 12h14" />,
   minus: <path fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" d="M5 12h14" />,
+  link: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      d="M10.5 13.5a4 4 0 0 0 5.7 0l3.3-3.3a4 4 0 1 0-5.7-5.7l-1.6 1.6M13.5 10.5a4 4 0 0 0-5.7 0l-3.3 3.3a4 4 0 1 0 5.7 5.7l1.6-1.6"
+    />
+  ),
   building: (
     <>
       <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M15 21V9h3a2 2 0 0 1 2 2v10M2 21h20" />

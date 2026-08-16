@@ -232,6 +232,16 @@
     border-bottom: 2px solid var(--color-brand-200);
     transform: rotate(45deg);
   }
+
+  /* Variante para cuando la mascota va al costado izquierdo del globo */
+  .burbuja-izq::after {
+    bottom: auto;
+    top: 1.6rem;
+    left: -11px;
+    border-right: 0;
+    border-bottom: 2px solid var(--color-brand-200);
+    border-left: 2px solid var(--color-brand-200);
+  }
 }
 
 /* Degradado tornasol de la cola: turquesa → lila → rosa */

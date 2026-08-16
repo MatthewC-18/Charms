@@ -12,6 +12,13 @@ export const site = {
   instagramUrl: 'https://instagram.com/charms.ecuador',
   threadsUrl: 'https://www.threads.net/@charms.ecuador',
   tiktokUrl: '',
+  /** Página con todos los enlaces de la marca */
+  atomBioUrl: 'https://www.atom.bio/charms_ecuador',
+  /** Mascota del sitio: el avatar 3D de la dueña */
+  mascota: {
+    name: 'Charmy',
+    rol: 'la artista de Charms',
+  },
   /** Número en formato internacional sin "+" (wa.me) */
   whatsapp: '593964170013',
   whatsappDisplay: '+593 96 417 0013',
@@ -158,7 +165,94 @@ export const galeria = [
     alt: 'Pieza de retrovisor con una figura sobre un auto gris',
     pie: 'Retrovisor · individual',
   },
+  {
+    src: './productos/taza-graduacion.webp',
+    alt: 'Taza con figura de una graduada con toga y birrete azul',
+    pie: 'Taza · graduación',
+  },
+  {
+    src: './productos/cuadro-4d-familia-grande.webp',
+    alt: 'Cuadro 4D con una familia de seis figuras y dos perros',
+    pie: 'Cuadro 4D · familia grande',
+  },
+  {
+    src: './productos/porta-llaves-familia.webp',
+    alt: 'Porta llaves de pared en forma de casa con tres figuras y un perro',
+    pie: 'Porta llaves · familia',
+  },
+  {
+    src: './productos/figura-odontologo.webp',
+    alt: 'Figura de un odontólogo junto a un sillón dental en porcelana fría',
+    pie: 'Figura · profesión',
+  },
+  {
+    src: './productos/cuadro-4d-gatos.webp',
+    alt: 'Cuadro 4D de madre e hija con seis gatos',
+    pie: 'Cuadro 4D · con mascotas',
+  },
+  {
+    src: './productos/llaveros-personajes.webp',
+    alt: 'Dos llaveros: un cerdito y un robot en porcelana fría',
+    pie: 'Llaveros · personajes',
+  },
+  {
+    src: './productos/taza-mascota.webp',
+    alt: 'Taza con la figura de un perro y su nombre en un hueso',
+    pie: 'Taza · mascota',
+  },
+  {
+    src: './productos/lote-corporativo-cajas.webp',
+    alt: 'Quince figuras corporativas empacadas en cajas individuales',
+    pie: 'Corporativo · lote empacado',
+  },
+  {
+    src: './productos/figuras-aguacates.webp',
+    alt: 'Pareja de aguacates de porcelana fría tomados de la mano',
+    pie: 'Decorativas · pareja de aguacates',
+  },
 ] as const
+
+/**
+ * Videos del taller (reels / TikToks).
+ *
+ * Deja el array vacío y la sección "Así se hace" no aparece en el inicio.
+ * Para sumar uno: guarda el archivo en `public/videos/` (mp4, vertical, sin audio
+ * obligatorio) y una miniatura, y agrega la entrada aquí.
+ * Ver `public/videos/LEEME.md`.
+ */
+export interface Video {
+  src: string
+  poster?: string
+  titulo: string
+  descripcion?: string
+}
+
+export const videos: Video[] = [
+  {
+    src: './videos/capibara-paso-a-paso.mp4',
+    poster: './videos/capibara-paso-a-paso.webp',
+    titulo: 'Paso a paso, a mano',
+    descripcion: 'Sin moldes ni impresión 3D: la masa se trabaja pieza por pieza.',
+  },
+  {
+    src: './videos/cuadro-4d-detalle.mp4',
+    poster: './videos/cuadro-4d-detalle.webp',
+    titulo: 'Cuadro 4D de cerca',
+    descripcion: 'El relieve, los rostros y el fondo de un cuadro familiar terminado.',
+  },
+  {
+    src: './videos/figura-dragon.mp4',
+    poster: './videos/figura-dragon.webp',
+    titulo: 'También hacemos personajes',
+    descripcion: 'Piezas de colección y encargos que no son retrato.',
+  },
+  {
+    src: './videos/taza-mario.mp4',
+    poster: './videos/taza-mario.webp',
+    titulo: 'Tazas modeladas en relieve',
+    descripcion: 'La figura se adhiere a la cerámica y se sella a mano.',
+  },
+]
 
 export const testimonials = [
   {

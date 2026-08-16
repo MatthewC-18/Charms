@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CABELLOS, PIELES, ROPAS, type ColoresMuneco } from '../data/muneco'
+import { CABELLOS, OJOS, PEINADOS, PIELES, ROPAS, type ColoresMuneco } from '../data/muneco'
 
 export { coloresIniciales, describirColores } from '../data/muneco'
 export type { ColoresMuneco }
@@ -223,10 +223,10 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
     aplicarRef.current?.(colores)
   }, [colores])
 
-  const fila = (
+  const filaColor = (
     titulo: string,
     opciones: readonly { id: string; label: string; hex: string }[],
-    clave: keyof ColoresMuneco,
+    clave: 'piel' | 'cabello' | 'ojos' | 'ropa',
   ) => (
     <div>
       <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-500">{titulo}</span>
@@ -246,6 +246,34 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
             }`}
             style={{ backgroundColor: o.hex }}
           />
+        ))}
+      </div>
+    </div>
+  )
+
+  const filaOpciones = <T extends string>(
+    titulo: string,
+    opciones: readonly { id: T; label: string }[],
+    activo: T,
+    onElegir: (v: T) => void,
+  ) => (
+    <div>
+      <span className="text-[0.7rem] font-extrabold uppercase tracking-wider text-ink-500">{titulo}</span>
+      <div className="mt-1.5 flex flex-wrap gap-2">
+        {opciones.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={activo === o.id}
+            onClick={() => onElegir(o.id)}
+            className={`chip border-2 px-3 py-1.5 ${
+              activo === o.id
+                ? 'border-brand-500 bg-brand-100 text-brand-800'
+                : 'border-clay-200 bg-white text-ink-700'
+            }`}
+          >
+            {o.label}
+          </button>
         ))}
       </div>
     </div>
@@ -274,10 +302,23 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
       </div>
 
       {conControles && onCambio && (
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {fila('Piel', PIELES, 'piel')}
-          {fila('Cabello', CABELLOS, 'cabello')}
-          {fila('Ropa', ROPAS, 'ropa')}
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {filaColor('Piel', PIELES, 'piel')}
+          {filaColor('Cabello', CABELLOS, 'cabello')}
+          {filaColor('Ojos', OJOS, 'ojos')}
+          {filaColor('Ropa', ROPAS, 'ropa')}
+          {filaOpciones('Peinado', PEINADOS, colores.peinado, (peinado) =>
+            onCambio({ ...colores, peinado }),
+          )}
+          {filaOpciones(
+            'Rasgos',
+            [
+              { id: 'ella' as const, label: 'Femeninos' },
+              { id: 'el' as const, label: 'Masculinos' },
+            ],
+            colores.estilo,
+            (estilo) => onCambio({ ...colores, estilo }),
+          )}
         </div>
       )}
     </div>

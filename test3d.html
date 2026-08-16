@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prueba 3D</title>
+  </head>
+  <body style="background: #eef7fb; margin: 0; font-family: system-ui">
+    <pre id="salida" style="padding: 12px">probando…</pre>
+    <script type="module">
+      import * as THREE from 'three'
+      import { crearMuneco } from '/src/three/muneco.ts'
+      import { crearSirena } from '/src/three/sirena.ts'
+
+      const salida = document.getElementById('salida')
+      const log = (x) => (salida.textContent += '\n' + x)
+      salida.textContent = 'inicio'
+
+      const enviar = (nombre, canvas) =>
+        fetch('/__captura', {
+          method: 'POST',
+          body: JSON.stringify({ nombre, dataUrl: canvas.toDataURL('image/png') }),
+        })
+
+      async function capturar(nombre, ancho, alto, armar) {
+        const canvas = document.createElement('canvas')
+        canvas.width = ancho
+        canvas.height = alto
+        canvas.style.width = ancho / 2 + 'px'
+        document.body.appendChild(canvas)
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
+        renderer.setClearColor(0xeef7fb, 1)
+        renderer.setSize(ancho, alto, false)
+
+        const escena = new THREE.Scene()
+        const camara = new THREE.PerspectiveCamera(38, ancho / alto, 0.1, 100)
+
+        escena.add(new THREE.HemisphereLight(0xdcf8fd, 0xf0eafe, 2))
+        const d = new THREE.DirectionalLight(0xffffff, 2)
+        d.position.set(3, 5, 5)
+        escena.add(d)
+        const d2 = new THREE.DirectionalLight(0xb79bf0, 0.8)
+        d2.position.set(-4, 1, 2)
+        escena.add(d2)
+
+        armar(escena, camara)
+        renderer.render(escena, camara)
+        await enviar(nombre, canvas)
+        log('capturado: ' + nombre)
+      }
+
+      try {
+        const colores = {
+          piel: '#eab88f',
+          cabello: '#171419',
+          ojos: '#5b3418',
+          ropa: '#2ec3df',
+          peinado: 'largo',
+          estilo: 'ella',
+        }
+
+        await capturar('muneco-frente', 700, 700, (escena, camara) => {
+          camara.position.set(0, 0.2, 6.6)
+          const m = crearMuneco(colores)
+          escena.add(m.grupo)
+        })
+
+        await capturar('muneco-tresquartos', 700, 700, (escena, camara) => {
+          camara.position.set(0, 0.2, 6.6)
+          const m = crearMuneco({ ...colores, peinado: 'corto', estilo: 'el', ropa: '#e0413f' })
+          m.grupo.rotation.y = -0.6
+          escena.add(m.grupo)
+        })
+
+        await capturar('muneco-cara', 700, 700, (escena, camara) => {
+          camara.position.set(0, 0.95, 3.2)
+          const m = crearMuneco(colores)
+          escena.add(m.grupo)
+        })
+
+        await capturar('sirena', 500, 900, (escena, camara) => {
+          camara.position.set(0, -1.1, 11)
+          const s = crearSirena()
+          escena.add(s.grupo)
+          const caja = new THREE.Box3().setFromObject(s.grupo)
+          log(' caja sirena y: ' + caja.min.y.toFixed(2) + ' → ' + caja.max.y.toFixed(2))
+          log(' caja sirena x: ' + caja.min.x.toFixed(2) + ' → ' + caja.max.x.toFixed(2))
+        })
+
+        log('LISTO')
+      } catch (e) {
+        log('ERROR: ' + e.message + '\n' + e.stack)
+      }
+    </script>
+  </body>
+</html>

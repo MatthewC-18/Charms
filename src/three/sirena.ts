@@ -1,12 +1,17 @@
 import * as THREE from 'three'
+import { crearCabeza } from './personaje'
 
 /**
- * Cola de sirena construida desde cero: no hay modelo descargado.
+ * Sirena completa construida desde cero: cabeza con la cara pintada, torso,
+ * brazos y la cola tornasol del logo.
  *
- * El cuerpo es una superficie paramétrica (anillos con radio decreciente a lo
- * largo de una curva) y la aleta son dos lóbulos generados con la misma función
- * de malla. El movimiento de nado y las escamas tornasol viven en el shader,
- * así que la animación corre entera en la GPU.
+ * La cola es una superficie paramétrica (anillos de radio decreciente a lo
+ * largo de una curva) más dos lóbulos de aleta, con un shader propio: la onda
+ * de nado ocurre en el vertex shader y las escamas iridiscentes se calculan en
+ * el fragment shader, sin texturas.
+ *
+ * El grupo queda de pie: origen en la cintura, cola hacia abajo, cabeza arriba
+ * y cara hacia +Z.
  */
 
 /** Construye una malla a partir de una función (u, v) → posición. */
@@ -14,7 +19,6 @@ function construirMalla(
   filas: number,
   columnas: number,
   fn: (u: number, v: number, destino: THREE.Vector3) => void,
-  /** Valor de avance longitudinal (0 = cintura, 1+ = punta de la aleta) */
   avance: (u: number) => number,
 ) {
   const posiciones: number[] = []
@@ -51,17 +55,19 @@ function construirMalla(
   return geo
 }
 
-/** Curva que recorre la cola, de la cintura a la aleta */
+/** Curva que recorre la cola, de la cintura a la aleta (en +X) */
 function puntoCurva(u: number, destino: THREE.Vector3) {
-  destino.set(u * 3.1, Math.sin(u * Math.PI * 0.55) * 0.42 - u * 0.15, 0)
+  // curva en S: la cadera cae recta, el tramo medio se arquea y la punta
+  // vuelve, como una cola de sirena en pleno nado
+  destino.set(u * 2.95, Math.sin(u * Math.PI * 1.15) * 0.52 - u * 0.05, Math.sin(u * Math.PI) * 0.12)
 }
 
-/** Radio del cuerpo: ancho en la cintura, delgado antes de la aleta */
+/** Radio del cuerpo: ancho en la cadera, delgado antes de la aleta */
 function radio(u: number) {
-  return 0.42 * Math.pow(1 - u, 0.82) + 0.045
+  return 0.5 * Math.pow(1 - u, 0.78) + 0.05
 }
 
-function cuerpo() {
+function cuerpoCola() {
   const centro = new THREE.Vector3()
   const siguiente = new THREE.Vector3()
   const tangente = new THREE.Vector3()
@@ -69,8 +75,8 @@ function cuerpo() {
   const binormal = new THREE.Vector3(0, 0, 1)
 
   return construirMalla(
-    72,
-    26,
+    76,
+    28,
     (u, v, destino) => {
       puntoCurva(u, centro)
       puntoCurva(Math.min(1, u + 0.01), siguiente)
@@ -79,41 +85,37 @@ function cuerpo() {
 
       const ang = v * Math.PI * 2
       const r = radio(u)
-      // sección ligeramente aplanada, como una cola real
       destino
         .copy(centro)
         .addScaledVector(normal, Math.cos(ang) * r)
-        .addScaledVector(binormal, Math.sin(ang) * r * 0.72)
+        .addScaledVector(binormal, Math.sin(ang) * r * 0.74)
     },
     (u) => u,
   )
 }
 
-/** Un lóbulo de la aleta: superficie plana con curvatura y borde festoneado */
+/** Un lóbulo de la aleta */
 function loboAleta(direccion: number) {
   const base = new THREE.Vector3()
   puntoCurva(1, base)
-
-  const angulo = direccion * 0.62
-  const largo = 1.5
+  const angulo = direccion * 0.75
+  const largo = 1.75
 
   return construirMalla(
-    26,
-    18,
+    24,
+    16,
     (u, v, destino) => {
       const s = u
       const w = (v - 0.5) * 2
+      const ancho = Math.pow(Math.sin(Math.min(1, s * 1.02) * Math.PI), 0.55) * 0.78 + 0.04
 
-      // ancho del lóbulo: nace fino, se abre y vuelve a cerrar en la punta
-      const ancho = Math.pow(Math.sin(Math.min(1, s * 1.05) * Math.PI), 0.62) * 0.62 + 0.03
-
-      const x = base.x + Math.cos(angulo) * s * largo - Math.abs(w) * 0.12
-      const y = base.y + Math.sin(angulo) * s * largo + w * ancho * 0.55
-      const z = w * ancho * 0.95 + Math.pow(s, 2) * w * 0.22
-
-      destino.set(x, y, z)
+      destino.set(
+        base.x + Math.cos(angulo) * s * largo - Math.abs(w) * 0.1,
+        base.y + Math.sin(angulo) * s * largo + w * ancho * 0.5,
+        w * ancho * 0.92 + Math.pow(s, 2) * w * 0.2,
+      )
     },
-    (u) => 1 + u * 0.55,
+    (u) => 1 + u * 0.5,
   )
 }
 
@@ -131,12 +133,10 @@ const vertexShader = /* glsl */ `
     vUv = uv;
 
     vec3 p = position;
-
-    // Onda de nado: casi nula en la cintura, amplia en la aleta
-    float fase = aAvance * 3.2 - uTiempo * 2.4;
-    float amp = pow(aAvance, 1.7) * (0.16 + uEnergia * 0.22);
+    float fase = aAvance * 3.0 - uTiempo * 2.3;
+    float amp = pow(aAvance, 1.8) * (0.14 + uEnergia * 0.2);
     p.y += sin(fase) * amp;
-    p.z += cos(fase * 0.9) * amp * 0.45;
+    p.z += cos(fase * 0.9) * amp * 0.4;
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     vNormal = normalize(normalMatrix * normal);
@@ -164,23 +164,23 @@ const fragmentShader = /* glsl */ `
     vec3 n = normalize(vNormal);
     float fresnel = pow(1.0 - max(dot(n, normalize(vVista)), 0.0), 2.2);
 
-    // Tornasol: la mezcla se corre según la posición, el ángulo y el tiempo
     float t = fract(vAvance * 0.62 + fresnel * 0.4 + uTiempo * 0.035);
     vec3 col = mix(cTurquesa, cLila, smoothstep(0.0, 0.34, t));
     col = mix(col, cRosa, smoothstep(0.34, 0.62, t));
     col = mix(col, cMenta, smoothstep(0.62, 0.9, t));
     col = mix(col, cTurquesa, smoothstep(0.9, 1.0, t));
 
-    // Escamas procedurales
-    vec2 rejilla = vec2(vUv.x * 30.0, vUv.y * 13.0);
+    // escamas: celdas grandes, con borde oscuro y brillo arriba
+    vec2 rejilla = vec2(vUv.x * 14.0, vUv.y * 8.0);
     rejilla.y += step(1.0, mod(floor(rejilla.x), 2.0)) * 0.5;
     vec2 celda = fract(rejilla) - 0.5;
-    float d = length(celda * vec2(1.0, 1.25));
-    float escama = smoothstep(0.48, 0.3, d);
-    col *= 0.84 + 0.24 * escama;
-    col += pow(escama, 7.0) * 0.3;
+    float d = length(celda * vec2(1.0, 1.15));
+    float cuerpoEscama = smoothstep(0.5, 0.42, d);
+    float borde = smoothstep(0.52, 0.44, d) - smoothstep(0.44, 0.36, d);
+    col *= 0.9 + 0.2 * cuerpoEscama;
+    col -= borde * 0.22;
+    col += smoothstep(0.2, 0.0, length((celda - vec2(0.0, 0.16)) * vec2(1.0, 1.6))) * 0.28;
 
-    // Luz suave y brillo del borde
     float luz = 0.6 + 0.4 * max(dot(n, normalize(vec3(0.35, 0.85, 0.55))), 0.0);
     col *= luz;
     col += fresnel * vec3(0.55, 0.75, 0.95) * 0.45;
@@ -192,6 +192,8 @@ const fragmentShader = /* glsl */ `
 export interface Sirena {
   grupo: THREE.Group
   material: THREE.ShaderMaterial
+  /** Alto total del modelo en unidades locales, para escalarlo desde afuera */
+  alto: number
   liberar: () => void
 }
 
@@ -212,22 +214,74 @@ export function crearSirena(): Sirena {
     },
   })
 
+  const geometrias: THREE.BufferGeometry[] = []
+  const materiales: THREE.Material[] = [material]
+
+  const nuevoMat = (o: THREE.MeshStandardMaterialParameters) => {
+    const m = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.05, ...o })
+    materiales.push(m)
+    return m
+  }
+
+  const matPiel = nuevoMat({ color: '#f3cfae' })
+  const matConcha = nuevoMat({ color: '#8fdff0', roughness: 0.25, metalness: 0.2 })
+
   const grupo = new THREE.Group()
-  const geometrias = [cuerpo(), loboAleta(1), loboAleta(-1)]
-  for (const g of geometrias) grupo.add(new THREE.Mesh(g, material))
 
-  // El pivote queda en la cintura para que la cola "cuelgue" al girar
-  grupo.position.x = -1.2
+  // ---------- cola (apunta hacia abajo) ----------
+  const cola = new THREE.Group()
+  for (const g of [cuerpoCola(), loboAleta(1), loboAleta(-1)]) {
+    geometrias.push(g)
+    cola.add(new THREE.Mesh(g, material))
+  }
+  cola.rotation.z = -Math.PI / 2 // el eje +X del modelo pasa a mirar hacia abajo
+  grupo.add(cola)
 
-  const contenedor = new THREE.Group()
-  contenedor.add(grupo)
+  const agregar = (geo: THREE.BufferGeometry, mat: THREE.Material, pos: [number, number, number]) => {
+    geometrias.push(geo)
+    const m = new THREE.Mesh(geo, mat)
+    m.position.set(...pos)
+    grupo.add(m)
+    return m
+  }
+
+  // ---------- torso ----------
+  const torso = agregar(new THREE.CapsuleGeometry(0.34, 0.55, 10, 24), matPiel, [0, 0.42, 0])
+  torso.scale.set(1, 1, 0.82)
+
+  // top de conchas
+  for (const lado of [-1, 1]) {
+    const concha = agregar(new THREE.SphereGeometry(0.21, 20, 16), matConcha, [lado * 0.19, 0.6, 0.2])
+    concha.scale.set(1, 0.85, 0.62)
+  }
+
+  // ---------- brazos ----------
+  for (const lado of [-1, 1]) {
+    const brazo = agregar(new THREE.CapsuleGeometry(0.11, 0.5, 8, 16), matPiel, [lado * 0.42, 0.5, 0.02])
+    brazo.rotation.z = lado * 0.22
+    agregar(new THREE.SphereGeometry(0.12, 16, 12), matPiel, [lado * 0.55, 0.18, 0.04])
+  }
+
+  // ---------- cabeza ----------
+  const cabeza = crearCabeza({
+    piel: '#f3cfae',
+    ojos: '#7a6bb5',
+    cabello: '#8f6fd8',
+    peinado: 'largo',
+    estilo: 'ella',
+  })
+  cabeza.grupo.scale.setScalar(0.56)
+  cabeza.grupo.position.set(0, 1.28, 0)
+  grupo.add(cabeza.grupo)
 
   return {
-    grupo: contenedor,
+    grupo,
     material,
+    alto: 6.25, // medido: de la punta de la aleta (-4.23) a la coronilla (+2.01)
     liberar: () => {
+      cabeza.liberar()
       for (const g of geometrias) g.dispose()
-      material.dispose()
+      for (const m of materiales) m.dispose()
     },
   }
 }

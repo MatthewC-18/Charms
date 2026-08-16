@@ -85,6 +85,13 @@ generados con la misma función de malla. El nado y las escamas viven en un shad
 
 Nada por el costado derecho siguiendo tu scroll, de arriba a abajo de la página.
 
+### La cara (`three/cara.ts`)
+
+Los ojos enormes con pestañas, iris, brillo y rubor no se pueden hacer con esferas:
+quedan como puntos negros. Se pintan en un canvas 2D y esa imagen se envuelve sobre la
+esfera de la cabeza. Como es un dibujo, se repinta al instante cuando cambian el tono de
+piel, de ojos o de cabello, y de ahí sale el parecido con las figuras del taller.
+
 ### El muñeco configurable (`three/muneco.ts`)
 
 Armado con primitivas (esferas, cápsulas, cilindros) con las proporciones reales de las
@@ -92,14 +99,20 @@ figuras del taller: cabeza grande, ojos enormes, base redonda, corazón en las m
 Se gira arrastrando, cambia de piel, cabello y ropa en vivo, y esa elección viaja en el
 mensaje de WhatsApp.
 
+### Banco de pruebas
+
+`test3d.html` (solo en desarrollo) arma las escenas, captura el lienzo y lo guarda en
+`capturas/` mediante un plugin de Vite. Sirve para revisar el modelado sin depender de
+capturas de pantalla manuales. Ejecutar `npm run dev` y abrir `/test3d.html`.
+
 Cuidados: Three.js se carga en un chunk aparte y solo cuando el visor se acerca a la
 pantalla; el render se detiene si el bloque no está a la vista o la pestaña está oculta;
 si el equipo no tiene WebGL, sale un aviso y el sitio sigue funcionando igual.
 
 ## 5. Movimiento e interacción
 
-Lo que separa este sitio de una plantilla. Todo es CSS + `transform`, sin librerías 3D:
-el peso del JS no sube y funciona igual en un teléfono de gama media.
+Además del 3D, la capa de movimiento en CSS. Todo con `transform`, sin librerías de
+animación: el peso del JS no sube y funciona igual en un teléfono de gama media.
 
 | Efecto | Dónde | Componente |
 |---|---|---|
@@ -122,7 +135,8 @@ Reglas que se respetan siempre:
   porque ahí no hay hover y solo estorbaría al hacer scroll.
 - **Nada bloquea el contenido**: si `IntersectionObserver` no dispara, un temporizador de
   respaldo muestra el bloque igual. El texto nunca queda invisible.
-- **Sin librerías de animación ni WebGL**: el bundle sigue por debajo de 100 KB gzip.
+- **Sin librerías de animación**: el paquete principal sigue por debajo de 105 KB gzip y
+  Three.js viaja en un chunk aparte que solo se descarga si hace falta.
 
 ## 6. Fotografía
 

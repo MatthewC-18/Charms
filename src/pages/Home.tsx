@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
+import Burbujas from '../components/Burbujas'
+import Contador from '../components/Contador'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import PieceArt from '../components/PieceArt'
 import ProductCard from '../components/ProductCard'
+import Reveal from '../components/Reveal'
+import Tilt3D from '../components/Tilt3D'
 import { categories, categoryPriceFrom, products } from '../data/products'
 import {
   faqs,
@@ -51,14 +54,15 @@ export default function Home() {
   return (
     <>
       {/* ---------------- HERO ---------------- */}
-      <section className="bg-tornasol relative overflow-hidden">
-        {/* Sello de marca: la cola de sirena del logo, como marca de agua */}
+      <section className="bg-tornasol bg-vivo relative overflow-hidden">
+        {/* Sello de marca: la cola de sirena del logo, con brillo tornasol */}
         <img
           src="./marca/cola-sirena.webp"
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-16 -left-24 w-[26rem] opacity-15 sm:-left-16 lg:w-[34rem]"
+          className="anim-tornasol pointer-events-none absolute -bottom-16 -left-24 w-[26rem] opacity-20 sm:-left-16 lg:w-[34rem]"
         />
+        <Burbujas cantidad={12} />
 
         <div className="container-x relative grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
           <div>
@@ -90,7 +94,9 @@ export default function Home() {
             <dl className="mt-10 grid max-w-lg grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
               {trustStats.map((s) => (
                 <div key={s.label}>
-                  <dt className="text-2xl font-extrabold text-brand-700">{s.value}</dt>
+                  <dt className="text-2xl font-extrabold text-brand-700">
+                    <Contador valor={s.value} />
+                  </dt>
                   <dd className="text-xs font-semibold leading-tight text-ink-500">{s.label}</dd>
                 </div>
               ))}
@@ -112,8 +118,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="card anim-float overflow-hidden rounded-[var(--radius-blob)]">
+          {/* Collage con profundidad: sigue al mouse en escritorio, plano en táctil */}
+          <Tilt3D max={11} className="relative">
+            <div className="card overflow-hidden rounded-[var(--radius-blob)]">
               <img
                 src="./productos/cuadro-columpio-pareja.webp"
                 alt="Cuadro columpio personalizado con una pareja en porcelana fría"
@@ -123,7 +130,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="card absolute -bottom-8 -left-3 w-36 overflow-hidden rounded-3xl sm:-left-8 sm:w-48">
+            <div className="card capa-frente absolute -bottom-8 -left-3 w-36 overflow-hidden rounded-3xl sm:-left-10 sm:w-48">
               <img
                 src="./productos/retrovisor-pareja-auto.webp"
                 alt="Pieza de retrovisor con una pareja sobre su auto"
@@ -132,11 +139,20 @@ export default function Home() {
               />
             </div>
 
-            <div className="card absolute -bottom-12 right-2 flex items-center gap-2 rounded-full px-4 py-2.5">
+            <div className="card capa-media absolute -right-4 -top-6 hidden w-32 overflow-hidden rounded-3xl sm:block sm:w-40">
+              <img
+                src="./productos/taza-graduacion.webp"
+                alt="Taza personalizada con una figura de graduación"
+                className="w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="card capa-frente absolute -bottom-12 right-2 flex items-center gap-2 rounded-full px-4 py-2.5">
               <Icon name="heart" className="h-4 w-4 text-coral-500" />
               <span className="text-xs font-extrabold text-ink-900">+900 piezas entregadas</span>
             </div>
-          </div>
+          </Tilt3D>
         </div>
       </section>
 
@@ -153,27 +169,19 @@ export default function Home() {
         </header>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((c) => (
+          {categories.map((c, i) => (
+            <Reveal key={c.id} delay={i * 70}>
             <Link
-              key={c.id}
               to={`/catalogo?cat=${c.id}`}
-              className="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
+              className="card group block overflow-hidden transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
             >
               <div className="aspect-[4/3] overflow-hidden bg-clay-100">
-                {c.photo ? (
-                  <img
-                    src={c.photo}
-                    alt={c.name}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <PieceArt
-                    art={c.art}
-                    label={c.name}
-                    className="h-full w-full transition duration-500 group-hover:scale-105"
-                  />
-                )}
+                <img
+                  src={c.photo}
+                  alt={c.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.07]"
+                />
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
@@ -185,6 +193,7 @@ export default function Home() {
                 <p className="mt-1.5 text-sm text-ink-500">{c.short}</p>
               </div>
             </Link>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -200,8 +209,10 @@ export default function Home() {
             </p>
           </header>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {populares.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {populares.map((p, i) => (
+              <Reveal key={p.id} delay={i * 70} className="h-full">
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         </div>
@@ -224,11 +235,9 @@ export default function Home() {
           </header>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {galeria.slice(0, 15).map((g) => (
-              <figure
-                key={g.src}
-                className="group relative overflow-hidden rounded-2xl border border-clay-200 bg-white shadow-[var(--shadow-soft)]"
-              >
+            {galeria.slice(0, 15).map((g, i) => (
+              <Reveal key={g.src} modo="zoom" delay={(i % 5) * 60}>
+              <figure className="group relative overflow-hidden rounded-2xl border border-clay-200 bg-white shadow-[var(--shadow-soft)]">
                 <img
                   src={g.src}
                   alt={g.alt}
@@ -239,6 +248,7 @@ export default function Home() {
                   {g.pie}
                 </figcaption>
               </figure>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -340,15 +350,15 @@ export default function Home() {
         </header>
 
         <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {steps.map((s) => (
-            <li key={s.n} className="card relative p-6">
+          {steps.map((s, i) => (
+            <Reveal key={s.n} as="li" delay={i * 60} className="card relative block p-6">
               <span className="absolute -top-3 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-sm font-extrabold text-white">
                 {s.n}
               </span>
               <Icon name={s.icon} className="mt-2 h-7 w-7 text-brand-600" />
               <h3 className="mt-3 text-lg font-extrabold">{s.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{s.text}</p>
-            </li>
+            </Reveal>
           ))}
         </ol>
 
@@ -387,14 +397,14 @@ export default function Home() {
       {/* ---------------- DIFERENCIADORES ---------------- */}
       <section className="container-x py-16">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {differentiators.map((d) => (
-            <div key={d.title} className="card p-6">
+          {differentiators.map((d, i) => (
+            <Reveal key={d.title} delay={i * 70} className="card p-6">
               <span className={`inline-flex rounded-2xl p-3 ${d.tono}`}>
                 <Icon name={d.icon} className="h-6 w-6" />
               </span>
               <h3 className="mt-4 text-lg font-extrabold">{d.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{d.text}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -504,8 +514,9 @@ export default function Home() {
 
       {/* ---------------- CTA FINAL ---------------- */}
       <section className="container-x py-16">
-        <div className="bg-tornasol card grid items-center gap-6 rounded-[var(--radius-blob)] p-10 sm:grid-cols-[1fr_auto]">
-          <div>
+        <div className="bg-tornasol bg-vivo card relative grid items-center gap-6 overflow-hidden rounded-[var(--radius-blob)] p-10 sm:grid-cols-[1fr_auto]">
+          <Burbujas cantidad={8} />
+          <div className="relative">
             <h2 className="max-w-2xl text-3xl sm:text-4xl">
               Mándanos la foto y te decimos hoy mismo cuánto cuesta
             </h2>

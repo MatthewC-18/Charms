@@ -268,6 +268,134 @@
   background-size: 26px 20px;
 }
 
+/* ---------------------------------------------------------------
+   Movimiento: aparición al scroll, inclinación 3D, burbujas y
+   brillo tornasol. Todo se apaga con prefers-reduced-motion.
+   --------------------------------------------------------------- */
+
+.revelable {
+  opacity: 0;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.revelable-abajo {
+  transform: translate3d(0, 28px, 0);
+}
+
+.revelable-zoom {
+  transform: scale(0.94);
+}
+
+.revelado {
+  opacity: 1;
+  transform: none;
+}
+
+/* Inclinación 3D con reflejo */
+.tilt3d {
+  perspective: 1000px;
+}
+
+.tilt3d-cara {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tilt3d-activo .tilt3d-cara {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.12s ease-out;
+}
+
+.tilt3d-brillo {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--brillo, 0);
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    rgb(255 255 255 / 0.55) 0%,
+    rgb(189 240 250 / 0.35) 22%,
+    rgb(226 215 252 / 0.25) 38%,
+    transparent 62%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* Elementos que "salen" del plano dentro de un Tilt3D */
+.capa-frente {
+  transform: translateZ(45px);
+}
+
+.capa-media {
+  transform: translateZ(24px);
+}
+
+/* Burbujas que suben */
+.burbuja-sube {
+  position: absolute;
+  bottom: -8%;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 32% 30%, rgb(255 255 255 / 0.95), rgb(146 230 246 / 0.35) 55%, rgb(146 230 246 / 0) 72%);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  animation-name: subir;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes subir {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(14px, -105vh, 0) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Brillo tornasol que recorre la cola del logo */
+.anim-tornasol {
+  animation: tornasol 14s ease-in-out infinite;
+}
+
+@keyframes tornasol {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  50% {
+    filter: hue-rotate(-22deg) saturate(1.25);
+  }
+}
+
+/* Degradado del hero que respira */
+.bg-vivo {
+  background-size: 160% 160%;
+  animation: mover-fondo 24s ease-in-out infinite;
+}
+
+@keyframes mover-fondo {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 .anim-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -308,9 +436,25 @@
 @media (prefers-reduced-motion: reduce) {
   .anim-float,
   .anim-float-slow,
-  .anim-saludo {
+  .anim-saludo,
+  .anim-tornasol,
+  .bg-vivo,
+  .burbuja-sube {
     animation: none;
   }
+
+  .revelable {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .tilt3d-cara,
+  .capa-frente,
+  .capa-media {
+    transform: none !important;
+  }
+
   html {
     scroll-behavior: auto;
   }

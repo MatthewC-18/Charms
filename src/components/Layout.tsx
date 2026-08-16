@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import Logo from './Logo'
+import ProgresoSirena from './ProgresoSirena'
 import Icon from './Icon'
 import { site, waUrl, logistics } from '../data/site'
 import { categories } from '../data/products'
@@ -278,6 +279,7 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
+      <ProgresoSirena />
       <Header />
       <main className="flex-1">
         <Outlet />

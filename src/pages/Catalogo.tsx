@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
+import Reveal from '../components/Reveal'
 import { categories, products } from '../data/products'
 import { occasions, waUrl } from '../data/site'
 
@@ -136,8 +137,10 @@ export default function Catalogo() {
 
         {filtered.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {filtered.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 3) * 70} className="h-full">
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         ) : (

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import PieceArt from '../components/PieceArt'
 import { categories, products } from '../data/products'
 import { logistics, occasions, site, waUrl } from '../data/site'
 import { addOns, buildQuote, money, quoteToMessage, volumeDiscountPct } from '../lib/quote'
@@ -160,11 +159,7 @@ export default function Personalizar() {
                           }`}
                         >
                           <span className="h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-clay-100">
-                            {p.photo ? (
-                              <img src={p.photo} alt="" loading="lazy" className="h-full w-full object-cover" />
-                            ) : (
-                              <PieceArt art={p.art} label={p.name} className="h-full w-full" />
-                            )}
+                            <img src={p.photo} alt="" loading="lazy" className="h-full w-full object-cover" />
                           </span>
                           <span className="min-w-0">
                             <span className="block truncate font-extrabold text-ink-900">{p.name}</span>
@@ -410,11 +405,7 @@ export default function Personalizar() {
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="card overflow-hidden">
             <div className="aspect-[5/3] bg-clay-100">
-              {product.photo ? (
-                <img src={product.photo} alt={product.name} className="h-full w-full object-cover" />
-              ) : (
-                <PieceArt art={product.art} label={product.name} className="h-full w-full" />
-              )}
+              <img src={product.photo} alt={product.name} className="h-full w-full object-cover" />
             </div>
             <div className="p-5">
               <h2 className="text-xl font-extrabold">{product.name}</h2>

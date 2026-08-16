@@ -5,6 +5,7 @@ porcelana fría. El objetivo del sitio no es vender con carrito: es **capturar e
 WhatsApp con toda la información ya escrita**, que es como el negocio realmente cierra.
 
 - Catálogo navegable con filtros por categoría, ocasión, búsqueda y orden por precio.
+- **Catálogo 100 % con fotos reales** (15 modelos, ningún dibujo de relleno)
 - **Cotizador en 4 pasos** con precio estimado en vivo (figuras, mascotas, extras, express, envío,
   descuento por volumen) que arma el mensaje de WhatsApp completo.
 - Página de **regalos corporativos** con tabla de descuentos y formulario de solicitud.
@@ -30,7 +31,9 @@ src/
 │   ├── site.ts       ← marca, WhatsApp, envíos, pasos, testimonios, FAQ, ocasiones, galería
 │   └── products.ts   ← categorías y catálogo (precios, figuras incluidas, extras, fotos)
 ├── lib/quote.ts      ← motor de cotización + armado del mensaje de WhatsApp
-├── components/       ← Layout, Logo, Mascota, Icon, ProductCard, PieceArt
+├── components/       ← Layout, Logo, Mascota, Icon, ProductCard
+│                     + Tilt3D, Reveal, Burbujas, Contador, ProgresoSirena
+├── hooks/            ← useMotionOk (respeta prefers-reduced-motion)
 └── pages/            ← Home, Catalogo, Producto, Personalizar, Empresas, ComoFunciona, Contacto
 public/productos/     ← fotos reales del taller en webp (ver LEEME.md)
 public/marca/         ← logo y stickers de la mascota (ver LEEME.md)
@@ -71,8 +74,9 @@ y `public/productos/LEEME.md`.
 ## Estado del contenido
 
 - ✅ Logo, cola de sirena, Charmy (mascota), 27 fotos reales y 4 videos del taller.
-- ⏳ Faltan fotos de 3 modelos (dúo de tazas, cuadro casita, cuadro de grupo): esos
-  todavía muestran una ilustración SVG de respaldo.
+- ✅ Catálogo completo con foto real: `photo` es obligatorio en el tipo `Product`.
+- ⏳ Retirados por falta de foto (se pueden reponer cuando la haya): dúo de tazas,
+  cuadro casita y corazón colgante de retrovisor.
 - ⚠️ **Precios, testimonios y correo son de ejemplo** y deben confirmarse con la dueña
   del negocio antes de publicar (lista completa en `docs/ESTRATEGIA.md`).
 

@@ -1,18 +1,5 @@
 import type { OccasionId } from './site'
 
-/** Clave del dibujo SVG de respaldo (ver components/PieceArt.tsx) */
-export type ArtKey =
-  | 'car'
-  | 'swing'
-  | 'frame4d'
-  | 'standing'
-  | 'mug'
-  | 'keychain'
-  | 'plaque'
-  | 'house'
-  | 'heartbase'
-  | 'group'
-
 export type CategoryId =
   | 'retrovisor'
   | 'cuadros'
@@ -26,9 +13,8 @@ export interface Category {
   name: string
   short: string
   description: string
-  art: ArtKey
-  /** Foto real de portada; si falta se dibuja la ilustración `art` */
-  photo?: string
+  /** Foto real de portada */
+  photo: string
 }
 
 export const categories: Category[] = [
@@ -38,7 +24,6 @@ export const categories: Category[] = [
     short: 'Van colgados en el espejo del carro',
     description:
       'La pieza estrella: tu familia, tu pareja o tus mascotas sobre el carro, colgando del retrovisor. Base liviana, cordón reforzado y placa con nombre o dedicatoria.',
-    art: 'car',
     photo: './productos/retrovisor-pareja-auto.webp',
   },
   {
@@ -47,7 +32,6 @@ export const categories: Category[] = [
     short: 'Columpio, 4D y escenas en relieve',
     description:
       'Escenas completas dentro de un marco: el columpio con la frase que elijas, fondos texturizados 4D, mascotas, corazones y paisajes. Para colgar en la pared o parar sobre un mueble.',
-    art: 'swing',
     photo: './productos/cuadro-columpio-pareja.webp',
   },
   {
@@ -56,7 +40,6 @@ export const categories: Category[] = [
     short: 'Profesiones, hobbies y momentos',
     description:
       'Una figura individual sobre base con nombre: médicos, militares, abogados, docentes, deportistas, graduados. El regalo típico de jubilación, ascenso o grado.',
-    art: 'standing',
     photo: './productos/figura-de-pie-mujer.webp',
   },
   {
@@ -65,7 +48,6 @@ export const categories: Category[] = [
     short: 'Cerámica + figura modelada en relieve',
     description:
       'Taza de cerámica intervenida a mano con una figura en porcelana fría. Uso decorativo o de uso suave: se lava a mano, no va a microondas.',
-    art: 'mug',
     photo: './productos/taza-graduacion.webp',
   },
   {
@@ -74,7 +56,6 @@ export const categories: Category[] = [
     short: 'Mini figuras y tableros de pared',
     description:
       'Mini versiones para llevar contigo, y porta llaves de pared con figuras y ganchos. Ideal para recuerdos de evento y detalles pequeños.',
-    art: 'keychain',
     photo: './productos/llaveros-personajes.webp',
   },
   {
@@ -83,7 +64,6 @@ export const categories: Category[] = [
     short: 'Reconocimientos y aniversarios',
     description:
       'Placas y figuras con logotipo, uniforme institucional y texto grabado. Reconocimientos por años de servicio, jubilaciones y regalos de fin de año desde 10 unidades.',
-    art: 'plaque',
     photo: './productos/corporativo-pronaca.webp',
   },
 ]
@@ -93,9 +73,8 @@ export interface Product {
   slug: string
   name: string
   category: CategoryId
-  art: ArtKey
-  /** Foto real: colocar en /public/productos y poner aquí la ruta, ej. './productos/columpio-01.webp' */
-  photo?: string
+  /** Foto real (obligatoria): ver public/productos/LEEME.md */
+  photo: string
   /** Fotos adicionales para la ficha del producto */
   gallery?: string[]
   blurb: string
@@ -119,7 +98,6 @@ export const products: Product[] = [
     slug: 'pareja-sobre-auto-retrovisor',
     name: 'Pareja sobre el auto',
     category: 'retrovisor',
-    art: 'car',
     photo: './productos/retrovisor-pareja-auto.webp',
     gallery: ['./productos/retrovisor-pareja-chevrolet.webp', './productos/retrovisor-individual.webp'],
     blurb: 'Ustedes dos sentados sobre su carro, con la placa real.',
@@ -139,7 +117,6 @@ export const products: Product[] = [
     slug: 'familia-sobre-auto-retrovisor',
     name: 'Familia sobre el auto',
     category: 'retrovisor',
-    art: 'car',
     photo: './productos/retrovisor-familia-hyundai.webp',
     gallery: ['./productos/retrovisor-familia-audi.webp', './productos/retrovisor-familia-bebe.webp'],
     blurb: 'Toda la familia arriba del carro, mascotas incluidas.',
@@ -154,23 +131,6 @@ export const products: Product[] = [
     highlights: ['Hasta 6 figuras', 'Dedicatoria en la base', 'Peso liviano'],
     popular: true,
   },
-  {
-    id: 'p-retro-corazon',
-    slug: 'corazon-colgante-retrovisor',
-    name: 'Corazón colgante',
-    category: 'retrovisor',
-    art: 'heartbase',
-    blurb: 'Formato pequeño con dos figuras y corazón rojo.',
-    description:
-      'Opción más económica para el retrovisor: base en forma de corazón, dos mini figuras y el nombre de cada una. Perfecto como detalle de San Valentín o recuerdo de evento.',
-    priceFrom: 22,
-    figuresIncluded: 2,
-    extraFigure: 9,
-    extraPet: 7,
-    size: 'Aprox. 8 × 6 cm',
-    occasions: ['aniversario', 'amistad'],
-    highlights: ['Formato compacto', 'Nombres incluidos', 'Listo en menos tiempo'],
-  },
 
   // ---------------- CUADROS ----------------
   {
@@ -178,7 +138,6 @@ export const products: Product[] = [
     slug: 'cuadro-columpio-pareja',
     name: 'Cuadro columpio',
     category: 'cuadros',
-    art: 'swing',
     photo: './productos/cuadro-columpio-pareja.webp',
     gallery: ['./productos/cuadro-columpio-familia.webp'],
     blurb: 'El más pedido: dos figuras en un columpio y tu frase arriba.',
@@ -198,13 +157,8 @@ export const products: Product[] = [
     slug: 'cuadro-4d-familia',
     name: 'Cuadro 4D familiar',
     category: 'cuadros',
-    art: 'frame4d',
     photo: './productos/cuadro-4d-familia-mascotas.webp',
-    gallery: [
-      './productos/cuadro-4d-familia-grande.webp',
-      './productos/cuadro-4d-familia-jardin.webp',
-      './productos/cuadro-4d-gatos.webp',
-    ],
+    gallery: ['./productos/cuadro-4d-gatos.webp'],
     blurb: 'Fondo texturizado con la familia completa en relieve.',
     description:
       'Escena en relieve sobre fondo texturizado, con las figuras de cuerpo entero, nombres sobre cada una, corazones y mascotas. El formato que mejor funciona para familias de 4 o más.',
@@ -218,31 +172,15 @@ export const products: Product[] = [
     popular: true,
   },
   {
-    id: 'p-cuadro-casita',
-    slug: 'cuadro-casita-corazones',
-    name: 'Cuadro casita',
-    category: 'cuadros',
-    art: 'house',
-    blurb: 'Marco en forma de casa con corazones y la pareja adentro.',
-    description:
-      'Marco con techo a dos aguas, corazones en relieve y las figuras dentro del "hogar". Muy pedido para estrenos de casa, bodas y primeros aniversarios.',
-    priceFrom: 58,
-    figuresIncluded: 2,
-    extraFigure: 12,
-    extraPet: 9,
-    size: 'Marco 26 × 30 cm',
-    occasions: ['boda', 'aniversario', 'nacimiento'],
-    highlights: ['Forma de casa', 'Corazones en relieve', 'Frase opcional'],
-  },
-  {
     id: 'p-cuadro-amigas',
     slug: 'cuadro-grupo-amigas',
     name: 'Cuadro de grupo',
     category: 'cuadros',
-    art: 'group',
-    blurb: 'Amigas, compañeras de trabajo o promoción, en fila.',
+    photo: './productos/cuadro-4d-familia-grande.webp',
+    gallery: ['./productos/cuadro-4d-familia-jardin.webp'],
+    blurb: 'Familias grandes, amigas o compañeros de trabajo, en fila.',
     description:
-      'Escena horizontal con 3 a 8 figuras de pie, cada una con su vestimenta y peinado. Banderín superior con la frase del grupo. El regalo de despedida más pedido de oficinas y promociones.',
+      'Escena horizontal con 4 a 8 figuras de pie, cada una con su ropa y peinado, sobre un fondo impreso a elección. Banderín inferior con la frase del grupo. El formato para familias grandes, despedidas de oficina y promociones.',
     priceFrom: 82,
     figuresIncluded: 4,
     extraFigure: 12,
@@ -259,7 +197,6 @@ export const products: Product[] = [
     slug: 'figura-profesion',
     name: 'Figura de profesión',
     category: 'figuras',
-    art: 'standing',
     photo: './productos/corporativo-pronaca.webp',
     gallery: ['./productos/figura-odontologo.webp', './productos/figura-de-pie-mujer.webp'],
     blurb: 'Uniforme, herramientas del oficio y base con nombre.',
@@ -279,7 +216,6 @@ export const products: Product[] = [
     slug: 'figura-graduacion',
     name: 'Figura de graduación',
     category: 'figuras',
-    art: 'standing',
     photo: './productos/figura-graduacion-bebe.webp',
     blurb: 'Toga, birrete y diploma, con la fecha del grado.',
     description:
@@ -297,7 +233,6 @@ export const products: Product[] = [
     slug: 'figura-numero-cumpleanos',
     name: 'Figura con número',
     category: 'figuras',
-    art: 'standing',
     photo: './productos/figura-de-pie-mujer.webp',
     blurb: 'La edad en grande, junto a la figura del festejado.',
     description:
@@ -315,7 +250,6 @@ export const products: Product[] = [
     slug: 'figura-mascota',
     name: 'Figura de mascota',
     category: 'figuras',
-    art: 'standing',
     photo: './productos/figura-nino-mascotas.webp',
     blurb: 'Tu perro o gato modelado según su pelaje real.',
     description:
@@ -334,7 +268,6 @@ export const products: Product[] = [
     slug: 'figuras-decorativas',
     name: 'Figuras decorativas',
     category: 'figuras',
-    art: 'standing',
     photo: './productos/figuras-aguacates.webp',
     gallery: ['./productos/figura-nino-mascotas.webp'],
     blurb: 'Personajes, parejas de frutas y piezas kawaii de repisa.',
@@ -356,7 +289,6 @@ export const products: Product[] = [
     slug: 'taza-con-figura',
     name: 'Taza con figura',
     category: 'tazas',
-    art: 'mug',
     photo: './productos/taza-graduacion.webp',
     gallery: [
       './productos/taza-feliz-retiro.webp',
@@ -374,23 +306,6 @@ export const products: Product[] = [
     occasions: ['cumpleanos', 'profesion', 'jubilacion', 'empresa'],
     highlights: ['Cerámica de 11 oz', 'Figura en relieve', 'Mensaje incluido'],
   },
-  {
-    id: 'p-taza-pareja',
-    slug: 'taza-pareja',
-    name: 'Dúo de tazas',
-    category: 'tazas',
-    art: 'mug',
-    blurb: 'Dos tazas que combinan: una para cada uno.',
-    description:
-      'Par de tazas decoradas como conjunto, una con cada figura de la pareja y una frase que se completa al juntarlas. Se entregan en caja de regalo.',
-    priceFrom: 52,
-    figuresIncluded: 2,
-    extraFigure: 10,
-    extraPet: 8,
-    size: '2 tazas de 11 oz',
-    occasions: ['aniversario', 'boda'],
-    highlights: ['Frase que se completa', 'Caja de regalo', 'Diseño en conjunto'],
-  },
 
   // ---------------- LLAVEROS ----------------
   {
@@ -398,7 +313,6 @@ export const products: Product[] = [
     slug: 'llavero-mini-figura',
     name: 'Llavero mini figura',
     category: 'llaveros',
-    art: 'keychain',
     photo: './productos/llaveros-personajes.webp',
     blurb: 'Versión mini para llevar en las llaves o la mochila.',
     description:
@@ -416,7 +330,6 @@ export const products: Product[] = [
     slug: 'porta-llaves-pared',
     name: 'Porta llaves de pared',
     category: 'llaveros',
-    art: 'keychain',
     photo: './productos/porta-llaves-familia.webp',
     blurb: 'Tablero con las figuras de la casa y ganchos.',
     description:
@@ -436,7 +349,6 @@ export const products: Product[] = [
     slug: 'placa-reconocimiento',
     name: 'Placa de reconocimiento',
     category: 'corporativo',
-    art: 'plaque',
     photo: './productos/corporativo-pronaca.webp',
     blurb: 'Figura con uniforme institucional y logo en relieve.',
     description:
@@ -455,7 +367,6 @@ export const products: Product[] = [
     slug: 'lote-corporativo',
     name: 'Lote corporativo',
     category: 'corporativo',
-    art: 'plaque',
     photo: './productos/lote-corporativo-cajas.webp',
     gallery: ['./productos/taller-produccion.webp'],
     blurb: 'Producción por volumen con diseño unificado.',

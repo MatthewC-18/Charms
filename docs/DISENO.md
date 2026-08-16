@@ -66,26 +66,53 @@ Criterios:
 - La animación es leve (`anim-saludo`, `anim-float-slow`) y se desactiva sola con
   `prefers-reduced-motion`.
 
-## 4. Fotografía
+## 4. Movimiento e interacción
+
+Lo que separa este sitio de una plantilla. Todo es CSS + `transform`, sin librerías 3D:
+el peso del JS no sube y funciona igual en un teléfono de gama media.
+
+| Efecto | Dónde | Componente |
+|---|---|---|
+| **Barra de progreso con la cola nadando** | Fija arriba, en todo el sitio | `ProgresoSirena.tsx` |
+| **Collage 3D que sigue al mouse** | Hero: el cuadro, el retrovisor y la taza en capas de profundidad | `Tilt3D.tsx` + `.capa-frente` / `.capa-media` |
+| **Inclinación + reflejo tornasol** | Cada tarjeta de producto | `Tilt3D.tsx` |
+| **Burbujas que suben** | Hero y bloque de cierre | `Burbujas.tsx` |
+| **Aparición al hacer scroll** | Categorías, productos, galería, pasos | `Reveal.tsx` |
+| **Números que cuentan** | Estadísticas del hero | `Contador.tsx` |
+| **Degradado que respira** | Fondos `.bg-vivo` | CSS |
+| **Brillo iridiscente** | Cola de sirena decorativa (`.anim-tornasol`) | CSS |
+
+Reglas que se respetan siempre:
+
+- **`prefers-reduced-motion`**: todo se apaga desde el CSS, incluidas las burbujas y el
+  tilt. Nadie se marea.
+- **El tilt solo con mouse fino** (`hover: hover and pointer: fine`): en táctil no aplica,
+  porque ahí no hay hover y solo estorbaría al hacer scroll.
+- **Nada bloquea el contenido**: si `IntersectionObserver` no dispara, un temporizador de
+  respaldo muestra el bloque igual. El texto nunca queda invisible.
+- **Sin librerías de animación ni WebGL**: el bundle sigue por debajo de 100 KB gzip.
+
+## 5. Fotografía
 
 Las fotos del taller son el activo más fuerte del sitio: fondo real (jardín, carro,
 pared), pieza en mano, marca de agua propia. Se recortan en 1:1 en el catálogo.
 
-Evitar mezclar fotos con las ilustraciones SVG dentro de una misma fila cuando se pueda:
-la foto siempre gana y la ilustración se ve como un hueco. Las ilustraciones quedan
-solo en los modelos que aún no tienen foto (dúo de tazas, cuadro casita, cuadro de grupo,
-corazón colgante).
+**Todo el catálogo va con foto real.** Se eliminaron las ilustraciones SVG de respaldo y
+los modelos que no tenían foto: mezclar dibujo y foto en una misma grilla hacía que el
+dibujo se viera como un hueco. Si vuelve un modelo al catálogo, entra con foto o no entra.
+Por eso `photo` es obligatorio en el tipo `Product`: el compilador no deja publicar un
+producto sin foto.
 
 ---
 
-## 5. Recomendaciones pendientes
+## 6. Recomendaciones pendientes
 
 Ordenadas por lo que más mueve la aguja.
 
 ### Alto impacto
 
-1. **Fotos de los 3 modelos que faltan** (dúo de tazas, cuadro casita, cuadro de grupo).
-   El resto del catálogo ya está con foto real.
+1. **Recuperar los 3 modelos retirados** cuando haya foto: dúo de tazas, cuadro casita y
+   corazón colgante para retrovisor. Están descritos en el historial de git.
 2. **Fotos en contexto**: el cuadro colgado en una pared, la pieza puesta en el retrovisor.
    Hoy casi todas son en mano; ayuda a imaginar el regalo ya entregado.
 3. **Un clip sin marca de agua** de TikTok/Instagram para el hero. Los actuales sirven,
@@ -95,7 +122,7 @@ Ordenadas por lo que más mueve la aguja.
 
 4. **Unificar el fondo de las fotos por categoría** (por ejemplo, todas las de retrovisor
    dentro del carro). Da ritmo visual a la grilla.
-5. **Micro-animación al hacer scroll** (aparecer suave de tarjetas). Con moderación.
+5. **Reels verticales en el hero** en vez de la foto fija, con el video en silencio.
 6. **Modo de contraste alto**: si la dueña quiere aún más pastel, subir la saturación solo
    en botones y precios para que no se pierdan.
 7. **Segundo tipo de tarjeta** para el catálogo cuando haya más de 30 modelos: grilla más

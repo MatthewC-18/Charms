@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
-import PieceArt from '../components/PieceArt'
+import Mascota from '../components/Mascota'
 import { logistics, site, waUrl } from '../data/site'
 import { money, volumeDiscountPct } from '../lib/quote'
 
@@ -81,7 +81,11 @@ export default function Empresas() {
             </div>
           </div>
           <div className="card overflow-hidden rounded-[var(--radius-blob)]">
-            <PieceArt art="plaque" label="Reconocimiento corporativo" className="w-full" />
+            <img
+              src="./productos/lote-corporativo-cajas.webp"
+              alt="Lote de reconocimientos corporativos empacados uno por uno"
+              className="w-full object-cover"
+            />
           </div>
         </div>
       </section>
@@ -154,7 +158,10 @@ export default function Empresas() {
           </div>
 
           <div className="card p-7">
-            <h2 className="text-2xl">Cuéntanos qué necesitas</h2>
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="text-2xl">Cuéntanos qué necesitas</h2>
+              <Mascota variant="listo" className="-mt-2 w-16 shrink-0" quieta />
+            </div>
             <p className="mt-1.5 text-sm text-ink-500">
               Completa y se abre WhatsApp con el mensaje listo. También puedes escribir a {site.email}.
             </p>

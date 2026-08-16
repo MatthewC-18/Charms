@@ -3,6 +3,7 @@ import Burbujas from '../components/Burbujas'
 import Contador from '../components/Contador'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
+import Muneco3D, { coloresIniciales } from '../components/Muneco3D'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import Tilt3D from '../components/Tilt3D'
@@ -251,6 +252,50 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ---------------- TALLER 3D ---------------- */}
+      <section className="relative overflow-hidden bg-ink-900 py-16 text-white">
+        <img
+          src="./marca/cola-sirena.webp"
+          alt=""
+          aria-hidden="true"
+          className="anim-tornasol pointer-events-none absolute -left-20 top-1/2 w-[30rem] -translate-y-1/2 opacity-15"
+        />
+        <div className="container-x relative grid items-center gap-10 lg:grid-cols-[1fr_1fr]">
+          <div>
+            <span className="chip bg-white/10 text-brand-200">
+              <Icon name="sparkles" className="h-4 w-4" /> Visor 3D en tiempo real
+            </span>
+            <h2 className="mt-4 text-3xl text-white sm:text-4xl">
+              Prueba los tonos antes de escribirnos
+            </h2>
+            <p className="mt-3 max-w-lg text-white/70">
+              Este muñeco está construido pieza por pieza dentro de tu navegador: gíralo, cámbiale la
+              piel, el cabello y la ropa. Es una referencia para que nos digas exactamente qué quieres;
+              tu figura real se modela a mano con tus fotos.
+            </p>
+            <ul className="mt-5 space-y-2 text-sm text-white/80">
+              <li className="flex gap-2">
+                <Icon name="check" className="h-5 w-5 shrink-0 text-brand-300" />
+                Arrástralo para verlo desde cualquier ángulo.
+              </li>
+              <li className="flex gap-2">
+                <Icon name="check" className="h-5 w-5 shrink-0 text-brand-300" />
+                Los tonos que elijas viajan en tu mensaje de WhatsApp.
+              </li>
+              <li className="flex gap-2">
+                <Icon name="check" className="h-5 w-5 shrink-0 text-brand-300" />
+                Funciona en el celular, sin instalar nada.
+              </li>
+            </ul>
+            <Link to="/personalizar" className="btn btn-primary mt-7">
+              Abrir el cotizador con visor 3D <Icon name="arrow" className="h-5 w-5" />
+            </Link>
+          </div>
+
+          <Muneco3D colores={coloresIniciales} conControles={false} />
         </div>
       </section>
 

@@ -122,6 +122,8 @@ export function quoteToMessage(input: QuoteInput, quote: QuoteResult, extra: {
   occasion: string
   deadline: string
   notes: string
+  /** Tonos elegidos en la vista previa 3D */
+  apariencia?: string
 }) {
   const l = [
     '¡Hola Charms! 👋 Quiero cotizar una pieza:',
@@ -136,6 +138,7 @@ export function quoteToMessage(input: QuoteInput, quote: QuoteResult, extra: {
           .join(', ')}`
       : null,
     input.rush ? '*Entrega express:* sí' : null,
+    extra.apariencia ? `*Referencia de la vista previa 3D:* ${extra.apariencia}` : null,
     `*Envío:* ${input.shippingZone}`,
     extra.occasion ? `*Ocasión:* ${extra.occasion}` : null,
     extra.deadline ? `*La necesito para:* ${extra.deadline}` : null,

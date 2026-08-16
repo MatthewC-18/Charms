@@ -66,14 +66,46 @@ Criterios:
 - La animación es leve (`anim-saludo`, `anim-float-slow`) y se desactiva sola con
   `prefers-reduced-motion`.
 
-## 4. Movimiento e interacción
+## 4. El 3D del sitio
+
+Todo el 3D está **construido desde cero con geometría**, sin modelos descargados ni
+visores de terceros. Son dos piezas, ambas en `src/three/`:
+
+### La sirena que guía (`three/sirena.ts`)
+
+La cola del logo, ahora en tres dimensiones: el cuerpo es una superficie paramétrica
+(anillos de radio decreciente a lo largo de una curva) y la aleta son dos lóbulos
+generados con la misma función de malla. El nado y las escamas viven en un shader propio:
+
+- **Vertex shader**: onda de nado que crece hacia la punta; se agita más fuerte cuando
+  haces scroll rápido (uniform `uEnergia`).
+- **Fragment shader**: tornasol turquesa → lila → rosa → menta mezclado según posición,
+  ángulo de vista (fresnel) y tiempo, con escamas procedurales dibujadas en el propio
+  shader (no hay textura).
+
+Nada por el costado derecho siguiendo tu scroll, de arriba a abajo de la página.
+
+### El muñeco configurable (`three/muneco.ts`)
+
+Armado con primitivas (esferas, cápsulas, cilindros) con las proporciones reales de las
+figuras del taller: cabeza grande, ojos enormes, base redonda, corazón en las manos.
+Se gira arrastrando, cambia de piel, cabello y ropa en vivo, y esa elección viaja en el
+mensaje de WhatsApp.
+
+Cuidados: Three.js se carga en un chunk aparte y solo cuando el visor se acerca a la
+pantalla; el render se detiene si el bloque no está a la vista o la pestaña está oculta;
+si el equipo no tiene WebGL, sale un aviso y el sitio sigue funcionando igual.
+
+## 5. Movimiento e interacción
 
 Lo que separa este sitio de una plantilla. Todo es CSS + `transform`, sin librerías 3D:
 el peso del JS no sube y funciona igual en un teléfono de gama media.
 
 | Efecto | Dónde | Componente |
 |---|---|---|
-| **Barra de progreso con la cola nadando** | Fija arriba, en todo el sitio | `ProgresoSirena.tsx` |
+| **Sirena 3D que acompaña el scroll** | Todo el sitio | `SirenaGuia.tsx` + `three/sirena.ts` |
+| **Visor 3D del muñeco** | Inicio y paso 2 del cotizador | `Muneco3D.tsx` + `three/muneco.ts` |
+| **Barra de progreso tornasol** | Fija arriba | `ProgresoSirena.tsx` |
 | **Collage 3D que sigue al mouse** | Hero: el cuadro, el retrovisor y la taza en capas de profundidad | `Tilt3D.tsx` + `.capa-frente` / `.capa-media` |
 | **Inclinación + reflejo tornasol** | Cada tarjeta de producto | `Tilt3D.tsx` |
 | **Burbujas que suben** | Hero y bloque de cierre | `Burbujas.tsx` |
@@ -92,7 +124,7 @@ Reglas que se respetan siempre:
   respaldo muestra el bloque igual. El texto nunca queda invisible.
 - **Sin librerías de animación ni WebGL**: el bundle sigue por debajo de 100 KB gzip.
 
-## 5. Fotografía
+## 6. Fotografía
 
 Las fotos del taller son el activo más fuerte del sitio: fondo real (jardín, carro,
 pared), pieza en mano, marca de agua propia. Se recortan en 1:1 en el catálogo.
@@ -105,7 +137,7 @@ producto sin foto.
 
 ---
 
-## 6. Recomendaciones pendientes
+## 7. Recomendaciones pendientes
 
 Ordenadas por lo que más mueve la aguja.
 

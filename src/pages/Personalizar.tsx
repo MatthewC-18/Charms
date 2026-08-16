@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
+import Muneco3D, { coloresIniciales, describirColores, type ColoresMuneco } from '../components/Muneco3D'
 import { categories, products } from '../data/products'
 import { logistics, occasions, site, waUrl } from '../data/site'
 import { addOns, buildQuote, money, quoteToMessage, volumeDiscountPct } from '../lib/quote'
@@ -69,6 +70,7 @@ export default function Personalizar() {
   const [rush, setRush] = useState(false)
   const [shippingZone, setShippingZone] = useState(logistics.shipping[0].zone)
 
+  const [colores, setColores] = useState<ColoresMuneco>(coloresIniciales)
   const [name, setName] = useState('')
   const [occasion, setOccasion] = useState('')
   const [deadline, setDeadline] = useState('')
@@ -77,7 +79,13 @@ export default function Personalizar() {
   const input = { product, figures, pets, addOnIds, rush, shippingZone, units }
   const quote = useMemo(() => buildQuote(input), [product, figures, pets, addOnIds, rush, shippingZone, units])
 
-  const message = quoteToMessage(input, quote, { name, occasion, deadline, notes })
+  const message = quoteToMessage(input, quote, {
+    name,
+    occasion,
+    deadline,
+    notes,
+    apariencia: describirColores(colores),
+  })
   const discountPct = volumeDiscountPct(units)
 
   const selectProduct = (id: string) => {
@@ -193,7 +201,19 @@ export default function Personalizar() {
                 {money(product.extraFigure)}.
               </p>
 
-              <div className="mt-5 grid gap-3">
+              <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+                <div>
+                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-ink-500">
+                    Vista previa 3D
+                  </h3>
+                  <p className="mt-1 text-xs leading-relaxed text-ink-500">
+                    Una referencia para que nos digas tonos y estilo. La figura final se modela a mano
+                    a partir de tus fotos.
+                  </p>
+                  <Muneco3D colores={colores} onCambio={setColores} className="mt-3" />
+                </div>
+
+                <div className="grid content-start gap-3">
                 <Counter
                   label="Personas"
                   hint="Adultos y niños, cada uno con su ropa y peinado"
@@ -224,6 +244,7 @@ export default function Personalizar() {
                   max={200}
                   onChange={setUnits}
                 />
+                </div>
               </div>
 
               <div className="mt-8 flex justify-between">

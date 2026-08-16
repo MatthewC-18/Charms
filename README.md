@@ -5,6 +5,9 @@ porcelana fría. El objetivo del sitio no es vender con carrito: es **capturar e
 WhatsApp con toda la información ya escrita**, que es como el negocio realmente cierra.
 
 - Catálogo navegable con filtros por categoría, ocasión, búsqueda y orden por precio.
+- **3D propio**: la cola de sirena del logo nada por la página siguiendo tu scroll y un
+  muñeco configurable (piel, cabello, ropa) que se gira con el dedo. Ambos construidos con
+  geometría desde cero en Three.js, sin modelos descargados.
 - **Catálogo 100 % con fotos reales** (15 modelos, ningún dibujo de relleno)
 - **Cotizador en 4 pasos** con precio estimado en vivo (figuras, mascotas, extras, express, envío,
   descuento por volumen) que arma el mensaje de WhatsApp completo.
@@ -14,7 +17,8 @@ WhatsApp con toda la información ya escrita**, que es como el negocio realmente
 
 ## Stack
 
-React 19 + TypeScript + Vite + Tailwind CSS v4 + React Router (HashRouter).
+React 19 + TypeScript + Vite + Tailwind CSS v4 + React Router (HashRouter) + Three.js
+(en un chunk aparte, se carga solo si hace falta).
 
 ```bash
 npm install
@@ -34,6 +38,7 @@ src/
 ├── components/       ← Layout, Logo, Mascota, Icon, ProductCard
 │                     + Tilt3D, Reveal, Burbujas, Contador, ProgresoSirena
 ├── hooks/            ← useMotionOk (respeta prefers-reduced-motion)
+├── three/            ← sirena.ts y muneco.ts: geometría y shaders propios
 └── pages/            ← Home, Catalogo, Producto, Personalizar, Empresas, ComoFunciona, Contacto
 public/productos/     ← fotos reales del taller en webp (ver LEEME.md)
 public/marca/         ← logo y stickers de la mascota (ver LEEME.md)

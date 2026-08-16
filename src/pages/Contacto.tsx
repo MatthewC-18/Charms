@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
-import PieceArt from '../components/PieceArt'
+import Mascota from '../components/Mascota'
 import { logistics, site, waUrl } from '../data/site'
 
 export default function Contacto() {
@@ -20,12 +20,15 @@ export default function Contacto() {
 
   return (
     <>
-      <section className="bg-porcelain">
-        <div className="container-x py-12">
-          <h1 className="text-4xl sm:text-5xl">Hablemos</h1>
-          <p className="mt-3 max-w-2xl text-lg text-ink-700">
-            La forma más rápida es WhatsApp: ahí mismo mandas las fotos y te damos el valor el mismo día.
-          </p>
+      <section className="bg-tornasol">
+        <div className="container-x flex flex-wrap items-end justify-between gap-6 py-12">
+          <div>
+            <h1 className="text-4xl sm:text-5xl">Hablemos</h1>
+            <p className="mt-3 max-w-2xl text-lg text-ink-700">
+              La forma más rápida es WhatsApp: ahí mismo mandas las fotos y te damos el valor el mismo día.
+            </p>
+          </div>
+          <Mascota variant="hola" conTexto className="hidden w-40 sm:block" />
         </div>
       </section>
 
@@ -151,7 +154,12 @@ export default function Contacto() {
                 Ir al cotizador <Icon name="arrow" className="h-5 w-5" />
               </Link>
             </div>
-            <PieceArt art="frame4d" label="Cuadro 4D familiar" className="w-full rounded-3xl" />
+            <img
+              src="./productos/cuadro-4d-familia-mascotas.webp"
+              alt="Cuadro 4D con una familia y sus mascotas en porcelana fría"
+              loading="lazy"
+              className="w-full rounded-3xl object-cover"
+            />
           </div>
         </div>
       </section>

@@ -102,6 +102,64 @@ export const steps = [
   },
 ] as const
 
+/**
+ * Trabajos reales del taller (fotos con marca de agua propia).
+ * Para sumar más: procesar con `node scripts/procesar-assets.mjs fotos <carpeta>`
+ * y agregar la entrada aquí.
+ */
+export const galeria = [
+  {
+    src: './productos/cuadro-columpio-pareja.webp',
+    alt: 'Cuadro columpio con pareja, corazón rojo y fecha de aniversario',
+    pie: 'Cuadro columpio · aniversario',
+  },
+  {
+    src: './productos/cuadro-4d-familia-mascotas.webp',
+    alt: 'Cuadro 4D con pareja, tres perros y nombres de cada uno',
+    pie: 'Cuadro 4D · familia con mascotas',
+  },
+  {
+    src: './productos/retrovisor-pareja-auto.webp',
+    alt: 'Pieza de retrovisor con pareja sobre un auto celeste',
+    pie: 'Retrovisor · pareja',
+  },
+  {
+    src: './productos/retrovisor-familia-hyundai.webp',
+    alt: 'Pieza de retrovisor con cuatro figuras sobre un auto blanco',
+    pie: 'Retrovisor · 4 figuras',
+  },
+  {
+    src: './productos/corporativo-pronaca.webp',
+    alt: 'Figura con uniforme institucional sobre base con logotipo en relieve',
+    pie: 'Corporativo · 20 años de servicio',
+  },
+  {
+    src: './productos/cuadro-columpio-familia.webp',
+    alt: 'Cuadro columpio con papá, hija y mamá',
+    pie: 'Cuadro columpio · familia',
+  },
+  {
+    src: './productos/figura-de-pie-mujer.webp',
+    alt: 'Figura de pie de una mujer con chaqueta azul y falda a cuadros',
+    pie: 'Figura de pie · cumpleaños',
+  },
+  {
+    src: './productos/retrovisor-familia-bebe.webp',
+    alt: 'Pieza de retrovisor con mamá, bebé y papá sobre un auto gris',
+    pie: 'Retrovisor · con bebé',
+  },
+  {
+    src: './productos/retrovisor-familia-audi.webp',
+    alt: 'Pieza de retrovisor con tres figuras sobre un auto blanco',
+    pie: 'Retrovisor · familia',
+  },
+  {
+    src: './productos/retrovisor-individual.webp',
+    alt: 'Pieza de retrovisor con una figura sobre un auto gris',
+    pie: 'Retrovisor · individual',
+  },
+] as const
+
 export const testimonials = [
   {
     name: 'Andrea M.',

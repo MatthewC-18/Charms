@@ -2,42 +2,70 @@
 
 /* ---------------------------------------------------------------
    Charms Ecuador — tokens de marca
-   Paleta tomada del logo (turquesa sirena) + porcelana cruda (crema)
-   + acento coral de los corazones de las piezas.
+
+   Paleta tomada del logo real (cola de sirena tornasol):
+   turquesa del fondo, escamas lila/menta/rosa y azul marino del
+   lettering. Todo en versión pastel, con el marino como color de
+   texto para que el contraste siga siendo legible.
    --------------------------------------------------------------- */
 @theme {
-  --color-brand-50: #eefdfd;
-  --color-brand-100: #d3f8fa;
-  --color-brand-200: #a9f0f5;
-  --color-brand-300: #6ee3ec;
-  --color-brand-400: #33cddb;
-  --color-brand-500: #14b8c4;
-  --color-brand-600: #0e93a3;
-  --color-brand-700: #117585;
-  --color-brand-800: #155e6c;
-  --color-brand-900: #164e5b;
+  /* Turquesa del logo — color principal */
+  --color-brand-50: #f1fcfe;
+  --color-brand-100: #dcf8fd;
+  --color-brand-200: #bdf0fa;
+  --color-brand-300: #92e6f6;
+  --color-brand-400: #5fd7ef;
+  --color-brand-500: #2ec3df;
+  --color-brand-600: #16a3c2;
+  --color-brand-700: #14829b;
+  --color-brand-800: #17677b;
+  --color-brand-900: #1a5464;
 
-  --color-clay-50: #fdfaf6;
-  --color-clay-100: #f9f1e7;
-  --color-clay-200: #f1e2cf;
-  --color-clay-300: #e6cdb0;
-  --color-clay-400: #d7b18b;
+  /* Escamas: lila, menta, rosa y durazno de la cola */
+  --color-lila-50: #f8f5ff;
+  --color-lila-100: #f0eafe;
+  --color-lila-200: #e2d7fc;
+  --color-lila-300: #cbb7f7;
+  --color-lila-400: #ae91ed;
+  --color-lila-500: #9370de;
 
-  --color-coral-400: #ff6b6b;
+  --color-menta-100: #e9faf4;
+  --color-menta-200: #cdf3e6;
+  --color-menta-300: #a5e7d2;
+  --color-menta-400: #6fd5b8;
+
+  --color-rosa-100: #fdeff6;
+  --color-rosa-200: #fbdcec;
+  --color-rosa-300: #f8bcdb;
+  --color-rosa-400: #f291c2;
+
+  --color-durazno-200: #fde8d2;
+  --color-durazno-300: #fbd4a8;
+
+  /* Neutros fríos, tipo porcelana */
+  --color-clay-50: #f8fcfd;
+  --color-clay-100: #eef6f9;
+  --color-clay-200: #deeaf0;
+  --color-clay-300: #c5d7e0;
+  --color-clay-400: #a5bcc9;
+
+  /* Azul marino del lettering — todo el texto */
+  --color-ink-500: #75839f;
+  --color-ink-700: #3c4a6a;
+  --color-ink-900: #16233f;
+
+  /* Rojo de los corazones de las piezas: solo acentos */
+  --color-coral-400: #ff8080;
   --color-coral-500: #ef4444;
   --color-coral-600: #d92d2d;
-
-  --color-ink-500: #6b7280;
-  --color-ink-700: #374151;
-  --color-ink-900: #14202b;
 
   --font-display: 'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
   --font-sans: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius-blob: 2.25rem;
 
-  --shadow-soft: 0 10px 30px -12px rgb(20 32 43 / 0.18);
-  --shadow-lift: 0 22px 45px -20px rgb(17 117 133 / 0.45);
+  --shadow-soft: 0 10px 30px -14px rgb(22 35 63 / 0.22);
+  --shadow-lift: 0 24px 45px -22px rgb(20 130 155 / 0.5);
 }
 
 @layer base {
@@ -59,10 +87,17 @@
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.015em;
+    color: var(--color-ink-900);
   }
 
   ::selection {
     background: var(--color-brand-200);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-brand-400);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
   }
 }
 
@@ -80,8 +115,8 @@
     justify-content: center;
     gap: 0.5rem;
     border-radius: 9999px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 700;
+    padding: 0.8rem 1.6rem;
+    font-weight: 800;
     line-height: 1;
     transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
@@ -91,14 +126,24 @@
   }
 
   .btn-primary {
-    background-color: var(--color-brand-500);
+    background-image: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-800));
     color: white;
     box-shadow: var(--shadow-soft);
   }
 
   .btn-primary:hover {
-    background-color: var(--color-brand-600);
     box-shadow: var(--shadow-lift);
+    transform: translateY(-1px);
+  }
+
+  /* Botón pastel: fondo suave con texto marino */
+  .btn-soft {
+    background-color: var(--color-brand-100);
+    color: var(--color-brand-900);
+  }
+
+  .btn-soft:hover {
+    background-color: var(--color-brand-200);
   }
 
   .btn-wa {
@@ -109,6 +154,7 @@
 
   .btn-wa:hover {
     background-color: #1fbb59;
+    transform: translateY(-1px);
   }
 
   .btn-ghost {
@@ -119,7 +165,7 @@
 
   .btn-ghost:hover {
     border-color: var(--color-brand-300);
-    color: var(--color-brand-700);
+    color: var(--color-brand-800);
   }
 
   .card {
@@ -134,9 +180,9 @@
     align-items: center;
     gap: 0.35rem;
     border-radius: 9999px;
-    padding: 0.3rem 0.75rem;
+    padding: 0.32rem 0.8rem;
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .field {
@@ -146,33 +192,78 @@
     background: white;
     padding: 0.7rem 0.9rem;
     font-size: 0.95rem;
+    color: var(--color-ink-900);
     outline: none;
     transition: border-color 0.15s ease;
   }
 
   .field:focus {
     border-color: var(--color-brand-400);
+    outline: none;
   }
 
   .label {
     display: block;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.85rem;
     margin-bottom: 0.35rem;
     color: var(--color-ink-700);
   }
+
+  /* Globo de diálogo de la mascota */
+  .burbuja {
+    position: relative;
+    background: white;
+    border: 2px solid var(--color-brand-200);
+    border-radius: 1.25rem;
+    padding: 0.85rem 1.1rem;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .burbuja::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 2rem;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-right: 2px solid var(--color-brand-200);
+    border-bottom: 2px solid var(--color-brand-200);
+    transform: rotate(45deg);
+  }
 }
 
-/* Textura suave tipo porcelana para secciones destacadas */
+/* Degradado tornasol de la cola: turquesa → lila → rosa */
+.bg-tornasol {
+  background-image:
+    radial-gradient(at 8% 12%, rgb(189 240 250 / 0.9) 0px, transparent 55%),
+    radial-gradient(at 92% 4%, rgb(226 215 252 / 0.85) 0px, transparent 50%),
+    radial-gradient(at 78% 88%, rgb(251 220 236 / 0.8) 0px, transparent 48%),
+    radial-gradient(at 30% 96%, rgb(205 243 230 / 0.7) 0px, transparent 45%);
+}
+
+/* Alias del degradado anterior, para no romper secciones existentes */
 .bg-porcelain {
   background-image:
-    radial-gradient(at 12% 18%, rgb(169 240 245 / 0.55) 0px, transparent 55%),
-    radial-gradient(at 88% 8%, rgb(249 241 231 / 0.9) 0px, transparent 50%),
-    radial-gradient(at 75% 92%, rgb(255 107 107 / 0.14) 0px, transparent 45%);
+    radial-gradient(at 8% 12%, rgb(189 240 250 / 0.9) 0px, transparent 55%),
+    radial-gradient(at 92% 4%, rgb(226 215 252 / 0.85) 0px, transparent 50%),
+    radial-gradient(at 78% 88%, rgb(251 220 236 / 0.8) 0px, transparent 48%);
+}
+
+/* Textura de escamas, inspirada en la cola del logo */
+.bg-escamas {
+  background-color: var(--color-brand-50);
+  background-image: radial-gradient(circle at 50% 0, transparent 9px, rgb(146 230 246 / 0.35) 10px, transparent 11px);
+  background-size: 26px 20px;
 }
 
 .anim-float {
   animation: float 6s ease-in-out infinite;
+}
+
+.anim-float-slow {
+  animation: float 9s ease-in-out infinite;
 }
 
 @keyframes float {
@@ -185,8 +276,29 @@
   }
 }
 
+.anim-saludo {
+  transform-origin: 70% 90%;
+  animation: saludo 5s ease-in-out infinite;
+}
+
+@keyframes saludo {
+  0%,
+  86%,
+  100% {
+    transform: rotate(0deg);
+  }
+  90% {
+    transform: rotate(-4deg);
+  }
+  94% {
+    transform: rotate(4deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .anim-float {
+  .anim-float,
+  .anim-float-slow,
+  .anim-saludo {
     animation: none;
   }
   html {

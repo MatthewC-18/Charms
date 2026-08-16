@@ -8,7 +8,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="card group flex flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
       <Link to={`/producto/${product.slug}`} className="relative block">
-        <div className="aspect-[5/3] w-full overflow-hidden bg-clay-100">
+        <div className="aspect-square w-full overflow-hidden bg-clay-100">
           {product.photo ? (
             <img
               src={product.photo}

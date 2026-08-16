@@ -1,9 +1,20 @@
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
+import Mascota from '../components/Mascota'
 import PieceArt from '../components/PieceArt'
 import ProductCard from '../components/ProductCard'
 import { categories, categoryPriceFrom, products } from '../data/products'
-import { faqs, logistics, occasions, site, steps, testimonials, trustStats, waUrl } from '../data/site'
+import {
+  faqs,
+  galeria,
+  logistics,
+  occasions,
+  site,
+  steps,
+  testimonials,
+  trustStats,
+  waUrl,
+} from '../data/site'
 import { money } from '../lib/quote'
 
 const differentiators = [
@@ -11,21 +22,25 @@ const differentiators = [
     icon: 'sketch' as const,
     title: 'Boceto antes de producir',
     text: 'Apruebas cómo va a quedar antes de que empecemos. Si algo no te convence, se ajusta sin costo.',
+    tono: 'bg-brand-100 text-brand-800',
   },
   {
     icon: 'camera' as const,
     title: 'Fotos reales antes del envío',
     text: 'Te mandamos fotos de tu pieza terminada. Recién ahí sale del taller.',
+    tono: 'bg-lila-100 text-lila-500',
   },
   {
     icon: 'shield' as const,
     title: 'Empaque anti-golpes',
     text: 'Caja rígida, espuma y sellado. Si llega dañada por el transporte, la reponemos.',
+    tono: 'bg-menta-200 text-brand-800',
   },
   {
     icon: 'truck' as const,
     title: 'Envíos a las 24 provincias',
     text: 'Entrega a domicilio en Quito y courier con número de guía al resto del país.',
+    tono: 'bg-rosa-200 text-ink-900',
   },
 ]
 
@@ -35,16 +50,17 @@ export default function Home() {
   return (
     <>
       {/* ---------------- HERO ---------------- */}
-      <section className="bg-porcelain relative overflow-hidden">
+      <section className="bg-tornasol relative overflow-hidden">
         <div className="container-x grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-20">
           <div>
-            <span className="chip bg-white text-brand-700 shadow-[var(--shadow-soft)]">
-              <Icon name="sparkles" className="h-4 w-4" /> Porcelana fría · hecho a mano en Ecuador
+            <span className="chip bg-white text-brand-800 shadow-[var(--shadow-soft)]">
+              <Icon name="sparkles" className="h-4 w-4 text-lila-400" /> Porcelana fría · hecho a mano en
+              Ecuador
             </span>
 
             <h1 className="mt-5 text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
               Convertimos tus fotos en
-              <span className="text-brand-600"> figuras que se quedan para siempre</span>
+              <span className="text-brand-700"> figuras que se quedan para siempre</span>
             </h1>
 
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-700">
@@ -74,15 +90,39 @@ export default function Home() {
 
           <div className="relative">
             <div className="card anim-float overflow-hidden rounded-[var(--radius-blob)]">
-              <PieceArt art="swing" label="Cuadro columpio personalizado" className="w-full" />
+              <img
+                src="./productos/cuadro-columpio-pareja.webp"
+                alt="Cuadro columpio personalizado con una pareja en porcelana fría"
+                className="w-full object-cover"
+                width={1200}
+                height={1200}
+              />
             </div>
-            <div className="card absolute -bottom-6 -left-2 w-40 overflow-hidden rounded-3xl sm:-left-8 sm:w-52">
-              <PieceArt art="car" label="Pieza para retrovisor" className="w-full" />
+
+            <div className="card absolute -bottom-8 -left-3 w-36 overflow-hidden rounded-3xl sm:-left-8 sm:w-48">
+              <img
+                src="./productos/retrovisor-pareja-auto.webp"
+                alt="Pieza de retrovisor con una pareja sobre su auto"
+                className="w-full object-cover"
+                loading="lazy"
+              />
             </div>
-            <div className="card absolute -right-2 -top-6 w-36 overflow-hidden rounded-3xl sm:-right-6 sm:w-44">
-              <PieceArt art="standing" label="Figura de profesión" className="w-full" />
+
+            {/* Mascota: el avatar de la dueña recibe a quien entra */}
+            <div className="absolute -right-2 -top-4 hidden sm:block">
+              <Mascota
+                variant="hola"
+                className="w-28 lg:w-36"
+                burbuja={
+                  <>
+                    ¡Hola! Cuéntame a quién quieres regalar
+                    <span aria-hidden> 💙</span>
+                  </>
+                }
+              />
             </div>
-            <div className="card absolute -bottom-10 right-4 flex items-center gap-2 rounded-full px-4 py-2.5">
+
+            <div className="card absolute -bottom-12 right-2 flex items-center gap-2 rounded-full px-4 py-2.5">
               <Icon name="heart" className="h-4 w-4 text-coral-500" />
               <span className="text-xs font-extrabold text-ink-900">+900 piezas entregadas</span>
             </div>
@@ -91,13 +131,13 @@ export default function Home() {
       </section>
 
       {/* ---------------- CATEGORÍAS ---------------- */}
-      <section className="container-x py-16">
+      <section className="container-x py-16 pt-24">
         <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-3xl sm:text-4xl">¿Qué quieres regalar?</h2>
             <p className="mt-2 text-ink-500">Seis formatos base. Todos se personalizan por completo.</p>
           </div>
-          <Link to="/catalogo" className="btn btn-ghost text-sm">
+          <Link to="/catalogo" className="btn btn-soft text-sm">
             Ver todo el catálogo <Icon name="arrow" className="h-4 w-4" />
           </Link>
         </header>
@@ -109,13 +149,28 @@ export default function Home() {
               to={`/catalogo?cat=${c.id}`}
               className="card group overflow-hidden transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
             >
-              <div className="aspect-[5/3] overflow-hidden bg-clay-100">
-                <PieceArt art={c.art} label={c.name} className="h-full w-full transition duration-500 group-hover:scale-105" />
+              <div className="aspect-[4/3] overflow-hidden bg-clay-100">
+                {c.photo ? (
+                  <img
+                    src={c.photo}
+                    alt={c.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <PieceArt
+                    art={c.art}
+                    label={c.name}
+                    className="h-full w-full transition duration-500 group-hover:scale-105"
+                  />
+                )}
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-lg font-extrabold">{c.name}</h3>
-                  <span className="chip bg-brand-100 text-brand-800">desde {money(categoryPriceFrom(c.id))}</span>
+                  <span className="chip bg-brand-100 text-brand-800">
+                    desde {money(categoryPriceFrom(c.id))}
+                  </span>
                 </div>
                 <p className="mt-1.5 text-sm text-ink-500">{c.short}</p>
               </div>
@@ -142,10 +197,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ---------------- GALERÍA REAL ---------------- */}
+      <section className="bg-escamas py-16">
+        <div className="container-x">
+          <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-4xl">Piezas que ya entregamos</h2>
+              <p className="mt-2 max-w-xl text-ink-500">
+                Fotos reales del taller, sin render ni montaje. Cada una salió de la foto que nos mandó un
+                cliente.
+              </p>
+            </div>
+            <a href={site.instagramUrl} target="_blank" rel="noreferrer" className="btn btn-ghost text-sm">
+              <Icon name="instagram" className="h-4 w-4" /> Ver más en Instagram
+            </a>
+          </header>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {galeria.map((g) => (
+              <figure
+                key={g.src}
+                className="group relative overflow-hidden rounded-2xl border border-clay-200 bg-white shadow-[var(--shadow-soft)]"
+              >
+                <img
+                  src={g.src}
+                  alt={g.alt}
+                  loading="lazy"
+                  className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-900/85 to-transparent px-3 pb-2.5 pt-8 text-[0.7rem] font-bold text-white">
+                  {g.pie}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ---------------- PROCESO ---------------- */}
       <section className="container-x py-16">
         <header className="mb-10 text-center">
-          <span className="chip bg-brand-100 text-brand-800">Del chat a tu casa</span>
+          <span className="chip bg-lila-100 text-lila-500">Del chat a tu casa</span>
           <h2 className="mt-3 text-3xl sm:text-4xl">Cómo se hace tu pieza</h2>
           <p className="mx-auto mt-2 max-w-2xl text-ink-500">
             Un proceso claro, sin sorpresas: apruebas el boceto, ves fotos reales antes del envío y sabes
@@ -167,7 +259,7 @@ export default function Home() {
         </ol>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3 rounded-3xl bg-brand-50 p-6 text-center">
-          <p className="text-sm font-semibold text-brand-800">
+          <p className="text-sm font-semibold text-brand-900">
             Producción normal: <strong>{logistics.productionDays}</strong> · Express:{' '}
             <strong>{logistics.rushDays}</strong> (+{logistics.rushSurchargePct}%)
           </p>
@@ -189,7 +281,7 @@ export default function Home() {
               <Link
                 key={o.id}
                 to={`/catalogo?oc=${o.id}`}
-                className="chip border-2 border-clay-200 bg-white px-4 py-2.5 text-sm text-ink-700 transition hover:border-brand-300 hover:text-brand-700"
+                className="chip border-2 border-clay-200 bg-white px-4 py-2.5 text-sm text-ink-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800"
               >
                 <span aria-hidden>{o.emoji}</span> {o.label}
               </Link>
@@ -203,7 +295,7 @@ export default function Home() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {differentiators.map((d) => (
             <div key={d.title} className="card p-6">
-              <span className="inline-flex rounded-2xl bg-brand-100 p-3 text-brand-700">
+              <span className={`inline-flex rounded-2xl p-3 ${d.tono}`}>
                 <Icon name={d.icon} className="h-6 w-6" />
               </span>
               <h3 className="mt-4 text-lg font-extrabold">{d.title}</h3>
@@ -234,7 +326,9 @@ export default function Home() {
                     <Icon key={i} name="star" className="h-4 w-4" />
                   ))}
                 </div>
-                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">“{t.text}”</blockquote>
+                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">
+                  “{t.text}”
+                </blockquote>
                 <figcaption className="mt-4 border-t border-clay-200 pt-3">
                   <span className="block text-sm font-extrabold text-ink-900">
                     {t.name} · {t.city}
@@ -275,8 +369,13 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="card overflow-hidden rounded-3xl">
-            <PieceArt art="plaque" label="Placa de reconocimiento corporativo" className="w-full" />
+          <div className="overflow-hidden rounded-3xl border border-white/10">
+            <img
+              src="./productos/corporativo-pronaca.webp"
+              alt="Reconocimiento corporativo en porcelana fría por 20 años de servicio"
+              loading="lazy"
+              className="w-full object-cover"
+            />
           </div>
         </div>
       </section>
@@ -289,9 +388,10 @@ export default function Home() {
             <p className="mt-2 text-ink-500">
               Las tres que más nos preguntan. El resto está en la página de ayuda.
             </p>
-            <Link to="/como-funciona#faq" className="btn btn-ghost mt-5 text-sm">
+            <Link to="/como-funciona#faq" className="btn btn-soft mt-5 text-sm">
               Ver todas las preguntas
             </Link>
+            <Mascota variant="pago" className="mt-6 hidden w-40 lg:block" />
           </div>
           <div className="space-y-3">
             {faqs.slice(0, 3).map((f) => (
@@ -310,27 +410,29 @@ export default function Home() {
 
       {/* ---------------- CTA FINAL ---------------- */}
       <section className="container-x py-16">
-        <div className="bg-porcelain card flex flex-col items-center gap-5 rounded-[var(--radius-blob)] p-10 text-center">
-          <h2 className="max-w-2xl text-3xl sm:text-4xl">
-            Mándanos la foto y te decimos hoy mismo cuánto cuesta
-          </h2>
-          <p className="max-w-xl text-ink-500">
-            Cotizar no cuesta nada y no te compromete. Respondemos en horario de atención:{' '}
-            {site.hours}.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <a
-              href={waUrl('¡Hola Charms! Quiero cotizar una pieza personalizada 😊')}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-wa text-base"
-            >
-              <Icon name="whatsapp" className="h-5 w-5" /> Escribir por WhatsApp
-            </a>
-            <Link to="/personalizar" className="btn btn-primary text-base">
-              Armar mi pieza <Icon name="arrow" className="h-5 w-5" />
-            </Link>
+        <div className="bg-tornasol card grid items-center gap-6 rounded-[var(--radius-blob)] p-10 sm:grid-cols-[1fr_auto]">
+          <div>
+            <h2 className="max-w-2xl text-3xl sm:text-4xl">
+              Mándanos la foto y te decimos hoy mismo cuánto cuesta
+            </h2>
+            <p className="mt-3 max-w-xl text-ink-700">
+              Cotizar no cuesta nada y no te compromete. Respondemos en horario de atención: {site.hours}.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={waUrl('¡Hola Charms! Quiero cotizar una pieza personalizada 😊')}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-wa text-base"
+              >
+                <Icon name="whatsapp" className="h-5 w-5" /> Escribir por WhatsApp
+              </a>
+              <Link to="/personalizar" className="btn btn-primary text-base">
+                Armar mi pieza <Icon name="arrow" className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
+          <Mascota variant="listo" conTexto className="w-44 sm:w-56" />
         </div>
       </section>
     </>

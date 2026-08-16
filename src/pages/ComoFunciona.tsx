@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
+import Mascota from '../components/Mascota'
 import { faqs, logistics, site, steps, waUrl } from '../data/site'
 import { money } from '../lib/quote'
 
@@ -14,13 +15,16 @@ const cuidados = [
 export default function ComoFunciona() {
   return (
     <>
-      <section className="bg-porcelain">
-        <div className="container-x py-12">
-          <h1 className="text-4xl sm:text-5xl">Cómo funciona</h1>
-          <p className="mt-3 max-w-2xl text-lg text-ink-700">
-            Todo lo que necesitas saber antes de pedir: el proceso, los tiempos, los envíos, la forma de pago
-            y cómo cuidar tu pieza.
-          </p>
+      <section className="bg-tornasol">
+        <div className="container-x flex flex-wrap items-end justify-between gap-6 py-12">
+          <div>
+            <h1 className="text-4xl sm:text-5xl">Cómo funciona</h1>
+            <p className="mt-3 max-w-2xl text-lg text-ink-700">
+              Todo lo que necesitas saber antes de pedir: el proceso, los tiempos, los envíos, la forma de
+              pago y cómo cuidar tu pieza.
+            </p>
+          </div>
+          <Mascota variant="hola" className="hidden w-32 sm:block" />
         </div>
       </section>
 
@@ -95,7 +99,10 @@ export default function ComoFunciona() {
 
       {/* ENVÍOS */}
       <section id="envios" className="container-x scroll-mt-28 py-14">
-        <h2 className="text-3xl">Envíos y pagos</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-3xl">Envíos y pagos</h2>
+          <Mascota variant="camino" conTexto className="hidden w-44 sm:block" quieta />
+        </div>
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <div className="card overflow-hidden">
             <table className="w-full text-left text-sm">
@@ -121,7 +128,10 @@ export default function ComoFunciona() {
           </div>
 
           <div className="card p-7">
-            <h3 className="text-xl font-extrabold">Formas de pago</h3>
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="text-xl font-extrabold">Formas de pago</h3>
+              <Mascota variant="pago" className="-mt-2 w-20 shrink-0" quieta />
+            </div>
             <ul className="mt-4 space-y-2.5 text-sm text-ink-700">
               <li className="flex gap-2">
                 <Icon name="check" className="h-5 w-5 shrink-0 text-brand-600" />
@@ -185,7 +195,8 @@ export default function ComoFunciona() {
           ))}
         </div>
 
-        <div className="card bg-porcelain mt-10 flex flex-col items-center gap-4 rounded-[var(--radius-blob)] p-10 text-center">
+        <div className="card bg-tornasol mt-10 flex flex-col items-center gap-4 rounded-[var(--radius-blob)] p-10 text-center">
+          <Mascota variant="hola" className="w-28" />
           <h3 className="text-2xl">¿Te quedó otra duda?</h3>
           <p className="max-w-lg text-ink-500">
             Escríbenos y te respondemos en horario de atención ({site.hours}).

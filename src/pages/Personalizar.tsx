@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Icon from '../components/Icon'
+import Mascota from '../components/Mascota'
 import PieceArt from '../components/PieceArt'
 import { categories, products } from '../data/products'
 import { logistics, occasions, site, waUrl } from '../data/site'
@@ -92,7 +93,7 @@ export default function Personalizar() {
 
   return (
     <>
-      <section className="bg-porcelain">
+      <section className="bg-tornasol">
         <div className="container-x py-12">
           <span className="chip bg-white text-brand-700 shadow-[var(--shadow-soft)]">
             <Icon name="sparkles" className="h-4 w-4" /> Cotizador
@@ -159,7 +160,11 @@ export default function Personalizar() {
                           }`}
                         >
                           <span className="h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-clay-100">
-                            <PieceArt art={p.art} label={p.name} className="h-full w-full" />
+                            {p.photo ? (
+                              <img src={p.photo} alt="" loading="lazy" className="h-full w-full object-cover" />
+                            ) : (
+                              <PieceArt art={p.art} label={p.name} className="h-full w-full" />
+                            )}
                           </span>
                           <span className="min-w-0">
                             <span className="block truncate font-extrabold text-ink-900">{p.name}</span>
@@ -388,10 +393,11 @@ export default function Personalizar() {
                 </pre>
               </div>
 
-              <div className="mt-6 flex flex-wrap justify-between gap-3">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
                 <button type="button" className="btn btn-ghost" onClick={() => setStep(3)}>
                   Atrás
                 </button>
+                <Mascota variant="listo" className="hidden w-24 sm:block" quieta />
                 <a className="btn btn-wa text-base" href={waUrl(message)} target="_blank" rel="noreferrer">
                   <Icon name="whatsapp" className="h-5 w-5" /> Enviar pedido por WhatsApp
                 </a>
@@ -404,7 +410,11 @@ export default function Personalizar() {
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="card overflow-hidden">
             <div className="aspect-[5/3] bg-clay-100">
-              <PieceArt art={product.art} label={product.name} className="h-full w-full" />
+              {product.photo ? (
+                <img src={product.photo} alt={product.name} className="h-full w-full object-cover" />
+              ) : (
+                <PieceArt art={product.art} label={product.name} className="h-full w-full" />
+              )}
             </div>
             <div className="p-5">
               <h2 className="text-xl font-extrabold">{product.name}</h2>

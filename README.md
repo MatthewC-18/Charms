@@ -27,12 +27,16 @@ npm run preview  # sirve dist/
 ```
 src/
 ├── data/
-│   ├── site.ts       ← marca, WhatsApp, envíos, pasos, testimonios, FAQ, ocasiones
-│   └── products.ts   ← categorías y catálogo (precios, figuras incluidas, extras)
+│   ├── site.ts       ← marca, WhatsApp, envíos, pasos, testimonios, FAQ, ocasiones, galería
+│   └── products.ts   ← categorías y catálogo (precios, figuras incluidas, extras, fotos)
 ├── lib/quote.ts      ← motor de cotización + armado del mensaje de WhatsApp
-├── components/       ← Layout, Logo, Icon, ProductCard, PieceArt (ilustraciones SVG)
+├── components/       ← Layout, Logo, Mascota, Icon, ProductCard, PieceArt
 └── pages/            ← Home, Catalogo, Producto, Personalizar, Empresas, ComoFunciona, Contacto
-public/productos/     ← aquí van las fotos reales (ver LEEME.md)
+public/productos/     ← fotos reales del taller en webp (ver LEEME.md)
+public/marca/         ← logo y stickers de la mascota (ver LEEME.md)
+assets-originales/    ← originales sin procesar (no se publican)
+scripts/              ← procesar-assets.mjs: optimiza fotos, logo y mascota
+docs/                 ← ESTRATEGIA.md (negocio) y DISENO.md (paleta y criterios)
 ```
 
 ## Qué se edita y dónde
@@ -45,14 +49,29 @@ public/productos/     ← aquí van las fotos reales (ver LEEME.md)
 | Productos, precios, figuras incluidas | `src/data/products.ts` |
 | Extras del cotizador (LED, caja, logo…) | `src/lib/quote.ts` → `addOns` |
 | Descuentos por volumen | `src/lib/quote.ts` → `volumeDiscountPct` |
-| Colores y tipografía de marca | `src/index.css` → bloque `@theme` |
+| Colores y tipografía de marca | `src/index.css` → bloque `@theme` (ver `docs/DISENO.md`) |
 | Fotos de producto | `public/productos/` + campo `photo` en `products.ts` |
+| Galería "piezas que ya entregamos" | `src/data/site.ts` → `galeria` |
+| Mascota (avatar de la dueña) | `src/components/Mascota.tsx` + `public/marca/` |
+
+## Assets
+
+El logo real, las fotos del taller y los stickers de la mascota se procesan con:
+
+```bash
+node scripts/procesar-assets.mjs fotos assets-originales/fotos
+```
+
+El script quita fondos, recorta y exporta a webp. Detalles en `public/marca/LEEME.md`
+y `public/productos/LEEME.md`.
 
 ## Estado del contenido
 
-Las **ilustraciones SVG** de cada pieza son temporales: reemplazarlas por fotos reales del taller
-(ver `public/productos/LEEME.md`). Los **precios, testimonios y correo son de ejemplo** y deben
-confirmarse con la dueña del negocio antes de publicar.
+- ✅ Logo, fotos de 10 piezas reales y mascota de la marca ya integrados.
+- ⏳ Faltan fotos de tazas, llaveros, porta llaves, cuadro casita y cuadro de grupo:
+  esos modelos todavía muestran una ilustración SVG de respaldo.
+- ⚠️ **Precios, testimonios y correo son de ejemplo** y deben confirmarse con la dueña
+  del negocio antes de publicar (lista completa en `docs/ESTRATEGIA.md`).
 
 ## Deploy
 

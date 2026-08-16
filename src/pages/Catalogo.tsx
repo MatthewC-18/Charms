@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import Icon from '../components/Icon'
+import Mascota from '../components/Mascota'
 import { categories, products } from '../data/products'
 import { occasions, waUrl } from '../data/site'
 
@@ -42,7 +43,7 @@ export default function Catalogo() {
 
   return (
     <>
-      <section className="bg-porcelain">
+      <section className="bg-tornasol">
         <div className="container-x py-12">
           <h1 className="text-4xl sm:text-5xl">{activeCategory ? activeCategory.name : 'Catálogo'}</h1>
           <p className="mt-3 max-w-2xl text-lg text-ink-700">
@@ -140,8 +141,9 @@ export default function Catalogo() {
             ))}
           </div>
         ) : (
-          <div className="card p-10 text-center">
-            <h2 className="text-2xl">No encontramos ese modelo</h2>
+          <div className="card flex flex-col items-center p-10 text-center">
+            <Mascota variant="hola" className="w-28" />
+            <h2 className="mt-4 text-2xl">No encontramos ese modelo</h2>
             <p className="mx-auto mt-2 max-w-md text-ink-500">
               La mayoría de nuestros pedidos son diseños que el cliente imagina y no están en el catálogo.
               Cuéntanos tu idea y la cotizamos igual.

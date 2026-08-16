@@ -293,8 +293,8 @@ export default function PieceArt({ art, label = '', className = '' }: PieceArtPr
     >
       <defs>
         <linearGradient id={`bg-${art}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#eefdfd" />
-          <stop offset="100%" stopColor="#f9f1e7" />
+          <stop offset="0%" stopColor="#dcf8fd" />
+          <stop offset="100%" stopColor="#f0eafe" />
         </linearGradient>
       </defs>
       <rect width="400" height="240" fill={`url(#bg-${art})`} />

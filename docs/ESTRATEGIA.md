@@ -52,7 +52,10 @@ Ventaja secundaria: cero backend, cero base de datos, cero costo mensual de host
 - **Empresas**: casos de uso, tabla de descuentos por volumen y formulario de solicitud.
 - **Cómo funciona**: proceso, qué fotos enviar, tiempos, envíos, pagos, cuidados y FAQ completo.
 - **Contacto** con todos los canales y formulario que abre WhatsApp.
-- Ilustraciones SVG propias como respaldo mientras no haya fotos reales.
+- **Identidad real aplicada**: logo de la cola de sirena, paleta pastel tornasol tomada
+  del logo y el avatar 3D de la dueña como mascota del sitio (ver `DISENO.md`).
+- **10 fotos reales** del taller en catálogo, fichas y galería de inicio.
+- Ilustraciones SVG propias como respaldo en los 8 modelos que aún no tienen foto.
 
 ---
 
@@ -64,7 +67,7 @@ Ordenadas por impacto sobre esfuerzo.
 
 | Idea | Por qué | Esfuerzo |
 |---|---|---|
-| **Fotos reales del taller** (3–5 por categoría) | Es lo único que hoy no es real. Las ilustraciones sostienen el diseño, pero no venden porcelana fría | Bajo (del cliente) |
+| **Fotos de las 5 categorías que faltan** (tazas, llaveros, porta llaves, casita, grupo) | Ya hay 10 fotos reales cargadas; con estas el catálogo queda 100 % real | Bajo (del cliente) |
 | **Galería "Clientes felices"** con reacciones reales | El destacado que más mira la gente en su IG | Bajo |
 | **Validar precios y tiempos** con la dueña | Todo el cotizador depende de estos números | Bajo |
 | **SEO local**: `schema.org` LocalBusiness + Product, títulos por página, sitemap | Para aparecer en "regalos personalizados Quito", "porcelana fría Ecuador" | Medio |

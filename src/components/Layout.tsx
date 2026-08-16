@@ -42,7 +42,7 @@ function Header() {
         scrolled ? 'bg-white/90 shadow-[0_6px_24px_-18px_rgba(20,32,43,.5)] backdrop-blur' : 'bg-clay-50'
       }`}
     >
-      <div className="bg-brand-600 text-white">
+      <div className="bg-brand-800 text-white">
         <div className="container-x flex flex-wrap items-center justify-center gap-x-6 gap-y-1 py-1.5 text-[0.72rem] font-bold sm:text-xs">
           <span className="inline-flex items-center gap-1.5">
             <Icon name="truck" className="h-3.5 w-3.5" /> Envíos a todo el Ecuador
@@ -58,7 +58,7 @@ function Header() {
 
       <div className="container-x flex items-center justify-between py-3">
         <Link to="/" aria-label="Ir al inicio">
-          <Logo />
+          <Logo className="h-11 sm:h-12" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -137,7 +137,7 @@ function Footer() {
     <footer className="mt-24 border-t border-clay-200 bg-white">
       <div className="container-x grid gap-10 py-14 md:grid-cols-4">
         <div className="md:col-span-1">
-          <Logo />
+          <Logo className="h-12" />
           <p className="mt-4 text-sm leading-relaxed text-ink-500">
             {site.tagline}. {site.claim}. Piezas únicas modeladas a mano en {site.city}.
           </p>

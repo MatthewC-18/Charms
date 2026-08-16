@@ -27,6 +27,8 @@ export interface Category {
   short: string
   description: string
   art: ArtKey
+  /** Foto real de portada; si falta se dibuja la ilustración `art` */
+  photo?: string
 }
 
 export const categories: Category[] = [
@@ -37,6 +39,7 @@ export const categories: Category[] = [
     description:
       'La pieza estrella: tu familia, tu pareja o tus mascotas sobre el carro, colgando del retrovisor. Base liviana, cordón reforzado y placa con nombre o dedicatoria.',
     art: 'car',
+    photo: './productos/retrovisor-pareja-auto.webp',
   },
   {
     id: 'cuadros',
@@ -45,6 +48,7 @@ export const categories: Category[] = [
     description:
       'Escenas completas dentro de un marco: el columpio con la frase que elijas, fondos texturizados 4D, mascotas, corazones y paisajes. Para colgar en la pared o parar sobre un mueble.',
     art: 'swing',
+    photo: './productos/cuadro-columpio-pareja.webp',
   },
   {
     id: 'figuras',
@@ -53,6 +57,7 @@ export const categories: Category[] = [
     description:
       'Una figura individual sobre base con nombre: médicos, militares, abogados, docentes, deportistas, graduados. El regalo típico de jubilación, ascenso o grado.',
     art: 'standing',
+    photo: './productos/figura-de-pie-mujer.webp',
   },
   {
     id: 'tazas',
@@ -77,6 +82,7 @@ export const categories: Category[] = [
     description:
       'Placas y figuras con logotipo, uniforme institucional y texto grabado. Reconocimientos por años de servicio, jubilaciones y regalos de fin de año desde 10 unidades.',
     art: 'plaque',
+    photo: './productos/corporativo-pronaca.webp',
   },
 ]
 
@@ -86,8 +92,10 @@ export interface Product {
   name: string
   category: CategoryId
   art: ArtKey
-  /** Foto real: colocar en /public/productos y poner aquí la ruta, ej. './productos/columpio-01.jpg' */
+  /** Foto real: colocar en /public/productos y poner aquí la ruta, ej. './productos/columpio-01.webp' */
   photo?: string
+  /** Fotos adicionales para la ficha del producto */
+  gallery?: string[]
   blurb: string
   description: string
   /** Precio referencial de la configuración base, en USD */
@@ -110,6 +118,8 @@ export const products: Product[] = [
     name: 'Pareja sobre el auto',
     category: 'retrovisor',
     art: 'car',
+    photo: './productos/retrovisor-pareja-auto.webp',
+    gallery: ['./productos/retrovisor-individual.webp'],
     blurb: 'Ustedes dos sentados sobre su carro, con la placa real.',
     description:
       'Réplica del carro de la pareja (color y modelo aproximados) con las dos figuras sentadas sobre el capó. Incluye placa con el número real del vehículo o una frase corta, y cordón para colgar del retrovisor.',
@@ -128,6 +138,8 @@ export const products: Product[] = [
     name: 'Familia sobre el auto',
     category: 'retrovisor',
     art: 'car',
+    photo: './productos/retrovisor-familia-hyundai.webp',
+    gallery: ['./productos/retrovisor-familia-audi.webp', './productos/retrovisor-familia-bebe.webp'],
     blurb: 'Toda la familia arriba del carro, mascotas incluidas.',
     description:
       'La versión familiar del clásico de retrovisor: hasta tres figuras sobre el vehículo, con espacio para sumar hijos o mascotas. Base con dedicatoria en la parte frontal.',
@@ -165,6 +177,8 @@ export const products: Product[] = [
     name: 'Cuadro columpio',
     category: 'cuadros',
     art: 'swing',
+    photo: './productos/cuadro-columpio-pareja.webp',
+    gallery: ['./productos/cuadro-columpio-familia.webp'],
     blurb: 'El más pedido: dos figuras en un columpio y tu frase arriba.',
     description:
       'Marco de madera con las figuras sentadas en un columpio colgante, banderín superior con la frase que elijas y placa inferior con la fecha. Fondo a elección: jardín, atardecer, flores o liso.',
@@ -183,6 +197,7 @@ export const products: Product[] = [
     name: 'Cuadro 4D familiar',
     category: 'cuadros',
     art: 'frame4d',
+    photo: './productos/cuadro-4d-familia-mascotas.webp',
     blurb: 'Fondo texturizado con la familia completa en relieve.',
     description:
       'Escena en relieve sobre fondo texturizado, con las figuras de cuerpo entero, nombres sobre cada una, corazones y mascotas. El formato que mejor funciona para familias de 4 o más.',
@@ -238,6 +253,8 @@ export const products: Product[] = [
     name: 'Figura de profesión',
     category: 'figuras',
     art: 'standing',
+    photo: './productos/corporativo-pronaca.webp',
+    gallery: ['./productos/figura-de-pie-mujer.webp'],
     blurb: 'Uniforme, herramientas del oficio y base con nombre.',
     description:
       'Figura individual de pie sobre base redonda, con el uniforme y los accesorios de la profesión: bata y estetoscopio, toga y balanza, uniforme militar o policial, casco, mandil, lo que necesites.',
@@ -273,6 +290,7 @@ export const products: Product[] = [
     name: 'Figura con número',
     category: 'figuras',
     art: 'standing',
+    photo: './productos/figura-de-pie-mujer.webp',
     blurb: 'La edad en grande, junto a la figura del festejado.',
     description:
       'Figura de pie acompañada del número de la edad en relieve (15, 30, 50, 80). Se usa como recuerdo y también como topper decorativo del pastel.',
@@ -381,6 +399,7 @@ export const products: Product[] = [
     name: 'Placa de reconocimiento',
     category: 'corporativo',
     art: 'plaque',
+    photo: './productos/corporativo-pronaca.webp',
     blurb: 'Figura con uniforme institucional y logo en relieve.',
     description:
       'Reconocimiento por años de servicio: figura con el uniforme de la empresa, logotipo modelado en relieve con los colores de marca y placa con nombre, cargo y fecha.',

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import PieceArt from '../components/PieceArt'
 import ProductCard from '../components/ProductCard'
@@ -9,6 +10,8 @@ import { money } from '../lib/quote'
 export default function Producto() {
   const { slug = '' } = useParams()
   const product = getProduct(slug)
+  const fotos = product?.photo ? [product.photo, ...(product.gallery ?? [])] : []
+  const [activa, setActiva] = useState(0)
 
   if (!product) {
     return (
@@ -41,11 +44,36 @@ export default function Producto() {
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          <div className="card overflow-hidden rounded-[var(--radius-blob)]">
-            {product.photo ? (
-              <img src={product.photo} alt={product.name} className="w-full object-cover" />
-            ) : (
-              <PieceArt art={product.art} label={product.name} className="w-full" />
+          <div>
+            <div className="card overflow-hidden rounded-[var(--radius-blob)]">
+              {fotos.length > 0 ? (
+                <img
+                  src={fotos[activa]}
+                  alt={`${product.name} — foto ${activa + 1}`}
+                  className="aspect-square w-full object-cover"
+                />
+              ) : (
+                <PieceArt art={product.art} label={product.name} className="w-full" />
+              )}
+            </div>
+
+            {fotos.length > 1 && (
+              <div className="mt-3 flex gap-3">
+                {fotos.map((f, i) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setActiva(i)}
+                    className={`h-20 w-20 overflow-hidden rounded-2xl border-2 transition ${
+                      i === activa ? 'border-brand-500' : 'border-clay-200 hover:border-brand-300'
+                    }`}
+                    aria-label={`Ver foto ${i + 1} de ${product.name}`}
+                    aria-pressed={i === activa}
+                  >
+                    <img src={f} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 

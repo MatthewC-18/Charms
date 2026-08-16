@@ -1,29 +1,42 @@
 # Fotos de producto
 
-Mientras no haya fotos reales, el sitio dibuja una ilustración SVG por cada modelo
-(`src/components/PieceArt.tsx`). Para reemplazarla por una foto:
+Las fotos reales del taller viven en esta carpeta en formato `.webp`, ya optimizadas.
+Los originales sin procesar están en `assets-originales/fotos/`.
 
-1. Guarda la imagen en esta carpeta, por ejemplo `columpio-01.jpg`.
-2. Abre `src/data/products.ts` y agrega el campo `photo` al producto:
+## Agregar fotos nuevas
+
+1. Copia los originales a `assets-originales/fotos/`.
+2. Agrega el nombre del archivo y el slug de destino en el mapa `fotos` de
+   `scripts/procesar-assets.mjs`.
+3. Ejecuta el procesamiento (redimensiona a 1200 px y convierte a webp):
+
+```bash
+node scripts/procesar-assets.mjs fotos assets-originales/fotos
+```
+
+4. Enlaza la foto en `src/data/products.ts`:
 
 ```ts
 {
   id: 'p-cuadro-columpio',
   // ...
-  photo: './productos/columpio-01.jpg',
+  photo: './productos/cuadro-columpio-pareja.webp',
+  gallery: ['./productos/cuadro-columpio-familia.webp'],
 }
 ```
 
+5. Si quieres que aparezca en la sección "Piezas que ya entregamos" del inicio,
+   agrégala también a `galeria` en `src/data/site.ts`.
+
 ## Recomendaciones para las fotos
 
-- Formato: `.webp` de preferencia (o `.jpg` de buena calidad).
-- Tamaño: 1200 × 800 px aproximadamente, orientación horizontal.
-- Peso: menos de 250 KB por imagen para que el sitio cargue rápido.
-- Encuadre: la pieza centrada, fondo neutro o del ambiente real (jardín, carro).
-- Sin marcas de agua grandes ni capturas de Instagram con la interfaz visible.
-- Nómbralas con el slug del producto para no perderse: `pareja-sobre-auto-retrovisor-01.webp`.
+- Encuadre cuadrado o vertical: las tarjetas del catálogo recortan a 1:1.
+- La pieza centrada, con fondo real (jardín, carro, pared) — se ve mejor que fondo blanco.
+- Buena luz natural, sin flash directo.
+- La marca de agua de Charms puede quedarse; da confianza y evita robos de foto.
+- Nombra los archivos con el slug del producto: `cuadro-columpio-pareja.webp`.
 
 ## Derechos
 
-Usa solo fotos propias del taller. Si en la foto aparece una pieza con el nombre o el
-rostro de un cliente, pide autorización antes de publicarla en el sitio.
+Usa solo fotos propias del taller. Si en la foto aparece el nombre o el rostro de un
+cliente (muy común en estas piezas), pide autorización antes de publicarla.

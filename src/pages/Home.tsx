@@ -3,7 +3,7 @@ import Burbujas from '../components/Burbujas'
 import Contador from '../components/Contador'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import Muneco3D, { coloresIniciales } from '../components/Muneco3D'
+import FiguraMuestra, { aparienciaInicial } from '../components/FiguraMuestra'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import Tilt3D from '../components/Tilt3D'
@@ -255,7 +255,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- TALLER 3D ---------------- */}
+      {/* ---------------- PRUEBA DE TONOS ---------------- */}
       <section className="relative overflow-hidden bg-ink-900 py-16 text-white">
         <img
           src="./marca/cola-sirena.webp"
@@ -266,20 +266,20 @@ export default function Home() {
         <div className="container-x relative grid items-center gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
             <span className="chip bg-white/10 text-brand-200">
-              <Icon name="sparkles" className="h-4 w-4" /> Visor 3D en tiempo real
+              <Icon name="sparkles" className="h-4 w-4" /> Prueba de tonos
             </span>
             <h2 className="mt-4 text-3xl text-white sm:text-4xl">
               Prueba los tonos antes de escribirnos
             </h2>
             <p className="mt-3 max-w-lg text-white/70">
-              Este muñeco está construido pieza por pieza dentro de tu navegador: gíralo, cámbiale la
-              piel, el cabello y la ropa. Es una referencia para que nos digas exactamente qué quieres;
-              tu figura real se modela a mano con tus fotos.
+              Eliges el formato —de pie, pareja, graduación o con mascota— y le cambias piel, cabello,
+              ojos y ropa. Es una referencia para que nos digas exactamente qué quieres; tu figura real
+              se modela a mano con tus fotos.
             </p>
             <ul className="mt-5 space-y-2 text-sm text-white/80">
               <li className="flex gap-2">
                 <Icon name="check" className="h-5 w-5 shrink-0 text-brand-300" />
-                Arrástralo para verlo desde cualquier ángulo.
+                Cuatro formatos, los que más salen del taller.
               </li>
               <li className="flex gap-2">
                 <Icon name="check" className="h-5 w-5 shrink-0 text-brand-300" />
@@ -291,11 +291,11 @@ export default function Home() {
               </li>
             </ul>
             <Link to="/personalizar" className="btn btn-primary mt-7">
-              Abrir el cotizador con visor 3D <Icon name="arrow" className="h-5 w-5" />
+              Abrir el cotizador <Icon name="arrow" className="h-5 w-5" />
             </Link>
           </div>
 
-          <Muneco3D colores={coloresIniciales} conControles={false} />
+          <FiguraMuestra colores={aparienciaInicial} conControles={false} />
         </div>
       </section>
 

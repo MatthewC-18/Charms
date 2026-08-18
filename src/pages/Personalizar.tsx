@@ -2,7 +2,11 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import Muneco3D, { coloresIniciales, describirColores, type ColoresMuneco } from '../components/Muneco3D'
+import FiguraMuestra, {
+  aparienciaInicial,
+  describirApariencia,
+  type Apariencia,
+} from '../components/FiguraMuestra'
 import { categories, products } from '../data/products'
 import { logistics, occasions, site, waUrl } from '../data/site'
 import { buildQuote, money, quoteToMessage, volumeDiscountPct } from '../lib/quote'
@@ -69,7 +73,7 @@ export default function Personalizar() {
   const [rush, setRush] = useState(false)
   const [shippingZone, setShippingZone] = useState(logistics.shipping[0].zone)
 
-  const [colores, setColores] = useState<ColoresMuneco>(coloresIniciales)
+  const [colores, setColores] = useState<Apariencia>(aparienciaInicial)
   const [name, setName] = useState('')
   const [occasion, setOccasion] = useState('')
   const [deadline, setDeadline] = useState('')
@@ -84,7 +88,7 @@ export default function Personalizar() {
     deadline,
     notes,
     shippingZone,
-    apariencia: describirColores(colores),
+    apariencia: describirApariencia(colores),
   })
   const discountPct = volumeDiscountPct(units)
 
@@ -200,13 +204,13 @@ export default function Personalizar() {
               <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
                 <div>
                   <h3 className="text-sm font-extrabold uppercase tracking-wider text-ink-500">
-                    Vista previa 3D
+                    Figura de muestra
                   </h3>
                   <p className="mt-1 text-xs leading-relaxed text-ink-500">
-                    Una referencia para que nos digas tonos y estilo. La figura final se modela a mano
-                    a partir de tus fotos.
+                    Elige el formato y los tonos para que lleguemos al chat con la idea clara. La pieza
+                    final se modela a mano a partir de tus fotos.
                   </p>
-                  <Muneco3D colores={colores} onCambio={setColores} className="mt-3" />
+                  <FiguraMuestra colores={colores} onCambio={setColores} className="mt-3" />
                 </div>
 
                 <div className="grid content-start gap-3">

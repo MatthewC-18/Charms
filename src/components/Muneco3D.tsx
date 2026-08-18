@@ -13,8 +13,8 @@ interface Props {
 }
 
 /**
- * Visor 3D del muñeco, armado con primitivas (ver three/muneco.ts).
- * Se arrastra para girarlo; sin interacción gira solo.
+ * Visor 3D de la figura coleccionable (ver three/figura.ts).
+ * Se arrastra para girarla; sin interacción gira sola.
  *
  * Three.js se importa de forma diferida y solo cuando el visor entra en
  * pantalla, así el resto del sitio no carga con su peso.
@@ -35,7 +35,7 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
 
     const montar = async () => {
       const THREE = await import('three')
-      const { crearMuneco } = await import('../three/muneco')
+      const { crearFigura } = await import('../three/figura')
       if (!vivo) return
 
       const canvas = document.createElement('canvas')
@@ -73,9 +73,15 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
       contra.position.set(-1.5, 2.5, -4)
       escena.add(contra)
 
-      const muneco = crearMuneco(colores)
-      escena.add(muneco.grupo)
-      aplicarRef.current = muneco.aplicar
+      const figura = await crearFigura(colores)
+      if (!vivo) {
+        figura.liberar()
+        renderer.dispose()
+        canvas.remove()
+        return
+      }
+      escena.add(figura.grupo)
+      aplicarRef.current = figura.aplicar
 
       const medir = () => {
         const w = nodo.clientWidth
@@ -149,9 +155,9 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
         }
 
         giro += (giroObjetivo - giro) * 0.12
-        muneco.grupo.rotation.y = giro
-        muneco.grupo.rotation.x = inclinacion
-        muneco.grupo.position.y = reducido ? 0 : Math.sin(reloj.getElapsedTime() * 1.1) * 0.045
+        figura.grupo.rotation.y = giro
+        figura.grupo.rotation.x = inclinacion
+        figura.grupo.position.y = reducido ? 0 : Math.sin(reloj.getElapsedTime() * 1.1) * 0.045
 
         renderer.render(escena, camara)
       }
@@ -166,7 +172,7 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
         canvas.removeEventListener('pointermove', mover)
         canvas.removeEventListener('pointerup', arriba)
         canvas.removeEventListener('pointercancel', arriba)
-        muneco.liberar()
+        figura.liberar()
         renderer.dispose()
         canvas.remove()
         aplicarRef.current = null
@@ -286,7 +292,7 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
 
         {!listo && !falla && (
           <p className="absolute inset-0 flex items-center justify-center text-sm font-bold text-brand-800">
-            Cargando el visor 3D…
+            Cargando la figura 3D…
           </p>
         )}
         {falla && (
@@ -296,7 +302,7 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
         )}
         {listo && (
           <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white/85 px-3 py-1 text-[0.7rem] font-bold text-ink-700 backdrop-blur">
-            Arrástralo para girarlo
+            Arrástrala para girarla
           </span>
         )}
       </div>
@@ -319,6 +325,10 @@ export default function Muneco3D({ colores, onCambio, conControles = true, class
             colores.estilo,
             (estilo) => onCambio({ ...colores, estilo }),
           )}
+          <p className="text-xs leading-relaxed text-ink-500 sm:col-span-2">
+            La figura de muestra es una sola: cambian los tonos, no el peinado ni los rasgos. Esos dos
+            viajan igual en el pedido y se modelan a mano con tus fotos.
+          </p>
         </div>
       )}
     </div>

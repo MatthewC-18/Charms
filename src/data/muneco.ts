@@ -1,5 +1,5 @@
 /**
- * Opciones del visor 3D. Vive aparte de `three/muneco.ts` a propósito:
+ * Opciones del visor 3D. Vive aparte de `three/figura.ts` a propósito:
  * así la interfaz puede importar la paleta sin arrastrar Three.js al paquete
  * principal (Three se carga solo cuando el visor entra en pantalla).
  */

@@ -337,6 +337,23 @@ function Escena({ a }: { a: Apariencia }) {
   )
 }
 
+/** Solo el dibujo, sin marco ni controles. Sirve para miniaturas y galerías. */
+export function FiguraSvg({ a, className = '' }: { a: Apariencia; className?: string }) {
+  const tipo = TIPOS.find((t) => t.id === a.tipo)?.label ?? 'figura'
+  return (
+    <svg
+      viewBox="0 0 260 290"
+      role="img"
+      aria-label={`Muestra de ${tipo.toLowerCase()} en los tonos elegidos`}
+      className={`block w-full ${className}`}
+    >
+      <g transform="translate(130 14)">
+        <Escena a={a} />
+      </g>
+    </svg>
+  )
+}
+
 interface Props {
   colores: Apariencia
   onCambio?: (c: Apariencia) => void
@@ -405,16 +422,7 @@ export default function FiguraMuestra({ colores, onCambio, conControles = true, 
   return (
     <div className={className}>
       <div className="bg-tornasol relative overflow-hidden rounded-[var(--radius-blob)] border border-clay-200">
-        <svg
-          viewBox="0 0 260 290"
-          role="img"
-          aria-label="Figura de muestra en los tonos elegidos"
-          className="block w-full"
-        >
-          <g transform="translate(130 14)">
-            <Escena a={colores} />
-          </g>
-        </svg>
+        <FiguraSvg a={colores} />
         <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white/85 px-3 py-1 text-[0.7rem] font-bold text-ink-700 backdrop-blur">
           Referencia de tonos
         </span>
@@ -433,14 +441,19 @@ export default function FiguraMuestra({ colores, onCambio, conControles = true, 
                   type="button"
                   aria-pressed={colores.tipo === t.id}
                   onClick={() => onCambio({ ...colores, tipo: t.id })}
-                  className={`rounded-2xl border-2 p-3 text-left transition ${
+                  className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left transition ${
                     colores.tipo === t.id
                       ? 'border-brand-500 bg-brand-50'
                       : 'border-clay-200 bg-white hover:border-brand-300'
                   }`}
                 >
-                  <span className="block text-sm font-extrabold text-ink-900">{t.label}</span>
-                  <span className="block text-xs text-ink-500">{t.hint}</span>
+                  <span className="bg-tornasol w-16 shrink-0 overflow-hidden rounded-xl">
+                    <FiguraSvg a={{ ...colores, tipo: t.id }} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-extrabold text-ink-900">{t.label}</span>
+                    <span className="block text-xs text-ink-500">{t.hint}</span>
+                  </span>
                 </button>
               ))}
             </div>

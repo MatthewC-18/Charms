@@ -3,7 +3,8 @@ import Burbujas from '../components/Burbujas'
 import Contador from '../components/Contador'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import FiguraMuestra, { aparienciaInicial } from '../components/FiguraMuestra'
+import { FiguraSvg } from '../components/FiguraMuestra'
+import { aparienciaInicial, type Apariencia } from '../data/figuras'
 import ProductCard from '../components/ProductCard'
 import Reveal from '../components/Reveal'
 import Tilt3D from '../components/Tilt3D'
@@ -46,6 +47,29 @@ const differentiators = [
     title: 'Envíos a las 24 provincias',
     text: 'Entrega a domicilio en Quito y courier con número de guía al resto del país.',
     tono: 'bg-rosa-200 text-ink-900',
+  },
+]
+
+/** Muestras de la portada: un formato y una paleta distinta en cada una */
+const muestras: Apariencia[] = [
+  { ...aparienciaInicial, tipo: 'individual', ropa: '#2ec3df', cabello: '#4b2f1d' },
+  { ...aparienciaInicial, tipo: 'pareja', ropa: '#f291c2', cabello: '#221c28', piel: '#f7d9bd' },
+  {
+    ...aparienciaInicial,
+    tipo: 'graduacion',
+    peinado: 'recogido',
+    ropa: '#2f5bd0',
+    piel: '#cb9165',
+    ojos: '#a8712a',
+  },
+  {
+    ...aparienciaInicial,
+    tipo: 'mascota',
+    estilo: 'el',
+    peinado: 'corto',
+    ropa: '#3d9c6b',
+    cabello: '#d8a95c',
+    ojos: '#4a86b8',
   },
 ]
 
@@ -295,7 +319,16 @@ export default function Home() {
             </Link>
           </div>
 
-          <FiguraMuestra colores={aparienciaInicial} conControles={false} />
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {muestras.map((m, i) => (
+              <div
+                key={i}
+                className="bg-tornasol overflow-hidden rounded-[var(--radius-blob)] border border-white/15"
+              >
+                <FiguraSvg a={m} />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

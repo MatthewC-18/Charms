@@ -1,19 +1,55 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMotionOk } from '../hooks/useMotionOk'
+import { categoryPriceFrom } from '../data/products'
+import { money } from '../lib/quote'
+import type { Pose } from '../three/sirena'
 
 /**
- * La sirena que acompaña la lectura.
+ * Charmy, la sirena que acompaña la lectura.
  *
- * Canvas fijo a pantalla completa (sin capturar clics) donde nada la sirena 3D
- * completa: desciende por el costado a medida que avanzas y aletea más fuerte
- * cuando haces scroll rápido. La posición se recorta contra el borde visible
- * para que nunca se le corte la cola.
+ * Canvas fijo a pantalla completa (sin capturar clics). Charmy nada por el
+ * margen lateral —nunca por encima del texto— y cada tanto se cambia de lado
+ * cruzando por abajo, girando hacia donde va y ladeándose en la curva. Mientras
+ * tanto va diciendo cosas: cambia de pose y aparece un globo anclado sobre su
+ * cabeza.
  *
- * Three.js se carga en un chunk aparte y solo si el equipo puede con WebGL y
- * el visitante no pidió reducir movimiento.
+ * Three.js y el modelo se cargan en un chunk aparte y solo si el equipo puede
+ * con WebGL y el visitante no pidió reducir movimiento.
  */
+
+interface Dialogo {
+  texto: string
+  pose: Pose
+}
+
+/** Lo que dice Charmy, en orden. Los precios salen del catálogo, no a mano. */
+const guion: Dialogo[] = [
+  { texto: '¡Hola! 👋✨ Soy Charmy 🧜‍♀️', pose: 'saludo' },
+  { texto: '💖 Bienvenido a Charms Ecuador 🇪🇨', pose: 'presentar' },
+  { texto: '🎨 Todo lo hacemos a mano, en porcelana fría 🙌', pose: 'presentar' },
+  { texto: '👀 ¿Ya viste el catálogo? Sigue bajando ⬇️', pose: 'idea' },
+  { texto: `🚗 Colgantes de retrovisor desde ${money(categoryPriceFrom('retrovisor'))} 💫`, pose: 'presentar' },
+  { texto: '💕 El cuadro columpio es el más pedido 🌷', pose: 'idea' },
+  { texto: '📸 Mándanos una foto y la volvemos figura ✨', pose: 'presentar' },
+  { texto: '🚚 Enviamos a todo el Ecuador 📦', pose: 'celebrar' },
+  { texto: '💬 ¿Tienes dudas? Escríbenos por WhatsApp 💚', pose: 'saludo' },
+  { texto: '🥰 Gracias por llegar hasta acá ✨🐚', pose: 'celebrar' },
+]
+
+/** Ritmo del guion, en segundos */
+const ESPERA_INICIAL = 0.8
+const DURACION = 4.2
+const PAUSA = 1.6
+
+/** Carril lateral donde vive Charmy, como fracción del semiancho visible */
+const CARRIL = 0.78
+/** Cada cuántos segundos se cambia de lado */
+const CAMBIO_LADO = 15
+
 export default function SirenaGuia() {
   const contenedor = useRef<HTMLDivElement>(null)
+  const globo = useRef<HTMLDivElement>(null)
+  const [linea, setLinea] = useState<string | null>(null)
   const motionOk = useMotionOk()
 
   useEffect(() => {
@@ -44,7 +80,7 @@ export default function SirenaGuia() {
 
       const esMovil = () => window.innerWidth < 768
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, esMovil() ? 1.5 : 2))
-      host.appendChild(canvas)
+      host.prepend(canvas)
       canvas.style.width = '100%'
       canvas.style.height = '100%'
       canvas.style.display = 'block'
@@ -53,23 +89,31 @@ export default function SirenaGuia() {
       const camara = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
       camara.position.z = 7
 
-      // Luz para el cuerpo y la cabeza (la cola se ilumina en su propio shader)
-      escena.add(new THREE.HemisphereLight(0xdcf8fd, 0xf0eafe, 2.2))
-      const clave = new THREE.DirectionalLight(0xffffff, 1.8)
+      // Luz suave y pareja: el modelo ya trae su color en las texturas, así que
+      // la luz solo tiene que dar volumen sin apagarle la cara.
+      escena.add(new THREE.HemisphereLight(0xdcf8fd, 0xf0eafe, 2.0))
+      const clave = new THREE.DirectionalLight(0xffffff, 1.5)
       clave.position.set(2.5, 4, 5)
       escena.add(clave)
-      const relleno = new THREE.DirectionalLight(0xb79bf0, 0.7)
+      const relleno = new THREE.DirectionalLight(0xb79bf0, 0.6)
       relleno.position.set(-3, 1, 2)
       escena.add(relleno)
 
-      const sirena = crearSirena()
+      let sirena: Awaited<ReturnType<typeof crearSirena>>
+      try {
+        sirena = await crearSirena()
+      } catch {
+        renderer.dispose()
+        canvas.remove()
+        return // el modelo no cargó: la página sigue igual
+      }
+      if (!vivo) {
+        sirena.liberar()
+        renderer.dispose()
+        canvas.remove()
+        return
+      }
       escena.add(sirena.grupo)
-
-      // El pivote está en la cintura, no en el centro del modelo. Estas medidas
-      // salen de la caja envolvente real (banco de pruebas en test3d.html).
-      const desplazamientoCentroY = 1.11
-      const desplazamientoCentroX = 0.28
-      const medioAnchoLocal = 1.35
 
       const medir = () => {
         const w = host.clientWidth
@@ -95,8 +139,23 @@ export default function SirenaGuia() {
       leerScroll()
       avanceSuave = avance
 
+      // Lado del carril: +1 derecha, −1 izquierda. `ladoSuave` lo persigue, y su
+      // velocidad es la que hace que Charmy gire y se ladee al cruzar.
+      let lado = 1
+      let ladoSuave = 1
+      let velLado = 0
+      let proximoCambio = CAMBIO_LADO
+
+      // Guion
+      let indice = -1
+      let ocultarEn = 0
+      let siguienteEn = ESPERA_INICIAL
+      let hablando = false
+
       let raf = 0
+      let ultimoT = 0
       const reloj = new THREE.Clock()
+      const ancla = new THREE.Vector3()
       const limitar = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 
       const dibujar = () => {
@@ -104,6 +163,8 @@ export default function SirenaGuia() {
         if (document.hidden) return
 
         const t = reloj.getElapsedTime()
+        const dt = Math.min(0.05, Math.max(0.001, t - ultimoT))
+        ultimoT = t
 
         avanceSuave += (avance - avanceSuave) * 0.06
         const velocidad = Math.abs(avanceSuave - ultimoAvance)
@@ -115,36 +176,69 @@ export default function SirenaGuia() {
         const w = anchoVisible()
 
         // Ocupa una fracción del alto de la pantalla, no un tamaño fijo
-        const escala = (h * (movil ? 0.2 : 0.26)) / sirena.alto
+        const escala = (h * (movil ? 0.18 : 0.22)) / sirena.alto
         sirena.grupo.scale.setScalar(escala)
 
         const medioAlto = (sirena.alto / 2) * escala
-        const medioAncho = medioAnchoLocal * escala
+        const medioAncho = sirena.medioAncho * escala
         const margen = 0.25
 
-        // Recorrido: baja por el costado derecho, serpenteando suave
-        const objetivoX = (movil ? 0.74 : 0.82) + Math.sin(avanceSuave * 6) * 0.06
-        const objetivoY = 0.78 - avanceSuave * 1.56
+        // ---------- recorrido ----------
+        if (t > proximoCambio) {
+          lado = -lado
+          proximoCambio = t + CAMBIO_LADO
+        }
+        const anterior = ladoSuave
+        // seguimiento amortiguado: el cruce dura ~1.5 s y no tiene esquinas
+        ladoSuave += (lado - ladoSuave) * (1 - Math.exp(-dt * 1.9))
+        velLado = (ladoSuave - anterior) / dt
+
+        // Nada por el carril lateral con una deriva suave; al cruzar baja un
+        // poco para no pasar por encima de lo que se está leyendo.
+        const cruce = 1 - Math.abs(ladoSuave)
+        const objetivoX = ladoSuave * CARRIL + Math.sin(t * 0.37) * 0.05
+        const objetivoY = 0.7 - avanceSuave * 1.45 + Math.sin(t * 0.55) * 0.05 - cruce * 0.42
 
         const x = limitar((objetivoX * w) / 2, -(w / 2 - medioAncho - margen), w / 2 - medioAncho - margen)
         const y = limitar((objetivoY * h) / 2, -(h / 2 - medioAlto - margen), h / 2 - medioAlto - margen)
+        // El coletazo la empuja: un vaivén corto, en fase con la cola
+        sirena.grupo.position.set(x, y + Math.sin(t * 2.6) * 0.03 * escala, 0)
 
-        sirena.grupo.position.set(
-          x + desplazamientoCentroX * escala,
-          y + desplazamientoCentroY * escala,
-          0,
-        )
+        // Mira al centro cuando está quieta y hacia donde va cuando cruza
+        const girar = limitar(velLado * 0.9, -1, 1)
+        sirena.grupo.rotation.y = -ladoSuave * 0.5 + girar * 0.55 + Math.sin(t * 0.4) * 0.07
+        sirena.grupo.rotation.z = -girar * 0.3 + Math.sin(t * 0.8) * 0.05
+        sirena.grupo.rotation.x = Math.sin(t * 0.45) * 0.05
 
-        // Se balancea al nadar y mira ligeramente hacia el contenido
-        sirena.grupo.rotation.z = Math.sin(t * 0.9) * 0.07 - Math.cos(avanceSuave * 6) * 0.12
-        sirena.grupo.rotation.y = -0.5 + Math.sin(t * 0.5) * 0.18
-        sirena.grupo.rotation.x = Math.sin(t * 0.4) * 0.06
+        // ---------- diálogo ----------
+        if (!hablando && t > siguienteEn) {
+          indice = (indice + 1) % guion.length
+          const d = guion[indice]
+          sirena.pose(d.pose)
+          setLinea(d.texto)
+          hablando = true
+          ocultarEn = t + DURACION
+        } else if (hablando && t > ocultarEn) {
+          sirena.pose('nadando')
+          setLinea(null)
+          hablando = false
+          siguienteEn = t + PAUSA
+        }
 
-        sirena.material.uniforms.uTiempo.value = t
-        sirena.material.uniforms.uEnergia.value = energia
-        sirena.material.uniforms.uOpacidad.value = 0.95
-
+        sirena.actualizar(t, energia)
         renderer.render(escena, camara)
+
+        // El globo se ancla sobre la cabeza: se proyecta la punta del modelo
+        const burbuja = globo.current
+        if (burbuja) {
+          burbuja.style.opacity = hablando ? '1' : '0'
+          if (hablando) {
+            ancla.set(0, 0.52, 0).applyMatrix4(sirena.grupo.matrixWorld).project(camara)
+            const px = limitar((ancla.x * 0.5 + 0.5) * host.clientWidth, 96, host.clientWidth - 96)
+            const py = (-ancla.y * 0.5 + 0.5) * host.clientHeight - 14
+            burbuja.style.transform = `translate(-50%, -100%) translate(${px}px, ${py}px)`
+          }
+        }
       }
 
       dibujar()
@@ -156,6 +250,7 @@ export default function SirenaGuia() {
         cancelAnimationFrame(raf)
         window.removeEventListener('scroll', leerScroll)
         window.removeEventListener('resize', medir)
+        setLinea(null)
         sirena.liberar()
         renderer.dispose()
         canvas.remove()
@@ -172,5 +267,17 @@ export default function SirenaGuia() {
 
   if (!motionOk) return null
 
-  return <div ref={contenedor} aria-hidden="true" className="pointer-events-none fixed inset-0 z-30" />
+  return (
+    <div ref={contenedor} aria-hidden="true" className="pointer-events-none fixed inset-0 z-30">
+      <div
+        ref={globo}
+        className="absolute left-0 top-0 opacity-0 transition-opacity duration-200 will-change-transform"
+      >
+        <div className="relative max-w-[11rem] rounded-2xl bg-white/95 px-3.5 py-2 text-center text-xs font-extrabold leading-snug text-ink-900 shadow-[var(--shadow-soft)] ring-1 ring-brand-200 sm:max-w-[15rem] sm:px-4 sm:py-2.5 sm:text-sm">
+          {linea}
+          <span className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1.5 rotate-45 rounded-[2px] bg-white/95" />
+        </div>
+      </div>
+    </div>
+  )
 }

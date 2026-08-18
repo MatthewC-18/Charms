@@ -25,3 +25,6 @@ dist-ssr
 
 # capturas del banco de pruebas 3D
 capturas
+
+.vercel
+.env*

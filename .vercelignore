@@ -1,0 +1,7 @@
+# Lo que no necesita el build en Vercel (el build corre allá, no se sube dist)
+node_modules
+dist
+assets-originales
+capturas
+docs
+test3d.html

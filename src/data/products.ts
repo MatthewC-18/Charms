@@ -79,11 +79,9 @@ export interface Product {
   gallery?: string[]
   blurb: string
   description: string
-  /** Precio referencial de la configuración base, en USD */
+  /** Precio real "desde" de la lista del taller, en USD (lista de ago 2026) */
   priceFrom: number
   figuresIncluded: number
-  extraFigure: number
-  extraPet: number
   size: string
   occasions: OccasionId[]
   highlights: string[]
@@ -103,10 +101,8 @@ export const products: Product[] = [
     blurb: 'Ustedes dos sentados sobre su carro, con la placa real.',
     description:
       'Réplica del carro de la pareja (color y modelo aproximados) con las dos figuras sentadas sobre el capó. Incluye placa con el número real del vehículo o una frase corta, y cordón para colgar del retrovisor.',
-    priceFrom: 32,
+    priceFrom: 11,
     figuresIncluded: 2,
-    extraFigure: 11,
-    extraPet: 8,
     size: 'Aprox. 10 × 7 cm',
     occasions: ['aniversario', 'cumpleanos', 'boda'],
     highlights: ['Placa personalizada', 'Color del carro a elección', 'Cordón reforzado'],
@@ -122,10 +118,8 @@ export const products: Product[] = [
     blurb: 'Toda la familia arriba del carro, mascotas incluidas.',
     description:
       'La versión familiar del clásico de retrovisor: hasta tres figuras sobre el vehículo, con espacio para sumar hijos o mascotas. Base con dedicatoria en la parte frontal.',
-    priceFrom: 42,
+    priceFrom: 11,
     figuresIncluded: 3,
-    extraFigure: 11,
-    extraPet: 8,
     size: 'Aprox. 12 × 7 cm',
     occasions: ['aniversario', 'padre', 'madre', 'mascotas'],
     highlights: ['Hasta 6 figuras', 'Dedicatoria en la base', 'Peso liviano'],
@@ -143,10 +137,8 @@ export const products: Product[] = [
     blurb: 'El más pedido: dos figuras en un columpio y tu frase arriba.',
     description:
       'Marco de madera con las figuras sentadas en un columpio colgante, banderín superior con la frase que elijas y placa inferior con la fecha. Fondo a elección: jardín, atardecer, flores o liso.',
-    priceFrom: 52,
+    priceFrom: 30.5,
     figuresIncluded: 2,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Marco 25 × 25 cm',
     occasions: ['aniversario', 'boda', 'cumpleanos'],
     highlights: ['Frase en el banderín', 'Fecha en la placa', 'Fondo a elección'],
@@ -162,10 +154,8 @@ export const products: Product[] = [
     blurb: 'Fondo texturizado con la familia completa en relieve.',
     description:
       'Escena en relieve sobre fondo texturizado, con las figuras de cuerpo entero, nombres sobre cada una, corazones y mascotas. El formato que mejor funciona para familias de 4 o más.',
-    priceFrom: 78,
+    priceFrom: 16,
     figuresIncluded: 4,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Marco 30 × 40 cm',
     occasions: ['madre', 'padre', 'nacimiento', 'mascotas'],
     highlights: ['Nombres individuales', 'Fondo texturizado', 'Mascotas incluidas'],
@@ -181,10 +171,8 @@ export const products: Product[] = [
     blurb: 'Familias grandes, amigas o compañeros de trabajo, en fila.',
     description:
       'Escena horizontal con 4 a 8 figuras de pie, cada una con su ropa y peinado, sobre un fondo impreso a elección. Banderín inferior con la frase del grupo. El formato para familias grandes, despedidas de oficina y promociones.',
-    priceFrom: 82,
+    priceFrom: 22.5,
     figuresIncluded: 4,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Marco 40 × 25 cm',
     occasions: ['amistad', 'grado', 'empresa'],
     highlights: ['Hasta 8 figuras', 'Ropa individual', 'Frase de grupo'],
@@ -202,10 +190,8 @@ export const products: Product[] = [
     blurb: 'Uniforme, herramientas del oficio y base con nombre.',
     description:
       'Figura individual de pie sobre base redonda, con el uniforme y los accesorios de la profesión: bata y estetoscopio, toga y balanza, uniforme militar o policial, casco, mandil, lo que necesites.',
-    priceFrom: 34,
+    priceFrom: 16,
     figuresIncluded: 1,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Alto aprox. 14 cm',
     occasions: ['profesion', 'grado', 'jubilacion'],
     highlights: ['Uniforme real', 'Accesorios del oficio', 'Nombre en la base'],
@@ -220,10 +206,8 @@ export const products: Product[] = [
     blurb: 'Toga, birrete y diploma, con la fecha del grado.',
     description:
       'Figura con toga y birrete del color de la institución, diploma en la mano y base con el nombre, la carrera y la fecha de graduación.',
-    priceFrom: 34,
+    priceFrom: 16,
     figuresIncluded: 1,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Alto aprox. 14 cm',
     occasions: ['grado'],
     highlights: ['Colores de la institución', 'Diploma modelado', 'Fecha grabada'],
@@ -237,10 +221,8 @@ export const products: Product[] = [
     blurb: 'La edad en grande, junto a la figura del festejado.',
     description:
       'Figura de pie acompañada del número de la edad en relieve (15, 30, 50, 80). Se usa como recuerdo y también como topper decorativo del pastel.',
-    priceFrom: 36,
+    priceFrom: 16,
     figuresIncluded: 1,
-    extraFigure: 12,
-    extraPet: 9,
     size: 'Alto aprox. 15 cm',
     occasions: ['cumpleanos'],
     highlights: ['Número a elección', 'Sirve de topper', 'Base con nombre'],
@@ -254,10 +236,8 @@ export const products: Product[] = [
     blurb: 'Tu perro o gato modelado según su pelaje real.',
     description:
       'Retrato de tu mascota en porcelana fría, trabajando manchas, textura de pelaje y color de ojos según las fotos que envíes. Base con su nombre.',
-    priceFrom: 26,
+    priceFrom: 11,
     figuresIncluded: 1,
-    extraFigure: 9,
-    extraPet: 9,
     size: 'Alto aprox. 9 cm',
     occasions: ['mascotas', 'cumpleanos'],
     highlights: ['Pelaje trabajado a mano', 'Nombre en la base', 'También en memoriam'],
@@ -273,10 +253,8 @@ export const products: Product[] = [
     blurb: 'Personajes, parejas de frutas y piezas kawaii de repisa.',
     description:
       'Piezas decorativas que no son retrato: parejas de aguacates, animalitos, personajes de series y videojuegos. Se modelan igual, a mano, y funcionan como detalle pequeño o adorno de escritorio.',
-    priceFrom: 24,
+    priceFrom: 11,
     figuresIncluded: 2,
-    extraFigure: 10,
-    extraPet: 8,
     size: 'Alto aprox. 8 cm c/u',
     occasions: ['aniversario', 'amistad', 'cumpleanos'],
     highlights: ['Diseño libre', 'Ideal para repisa', 'También por encargo de personajes'],
@@ -298,10 +276,8 @@ export const products: Product[] = [
     blurb: 'Taza cerámica con una figura modelada al frente.',
     description:
       'Taza blanca de cerámica con una figura en relieve adherida al frente y el nombre o mensaje en la parte inferior. Uso decorativo, lavado a mano.',
-    priceFrom: 28,
+    priceFrom: 11,
     figuresIncluded: 1,
-    extraFigure: 10,
-    extraPet: 8,
     size: 'Taza de 11 oz',
     occasions: ['cumpleanos', 'profesion', 'jubilacion', 'empresa'],
     highlights: ['Cerámica de 11 oz', 'Figura en relieve', 'Mensaje incluido'],
@@ -317,10 +293,8 @@ export const products: Product[] = [
     blurb: 'Versión mini para llevar en las llaves o la mochila.',
     description:
       'Mini figura de 5 cm con argolla reforzada. El más pedido como recuerdo de evento por cantidad, y como detalle pequeño de cumpleaños.',
-    priceFrom: 14,
+    priceFrom: 11,
     figuresIncluded: 1,
-    extraFigure: 8,
-    extraPet: 7,
     size: 'Alto aprox. 5 cm',
     occasions: ['cumpleanos', 'amistad', 'empresa'],
     highlights: ['Desde 1 unidad', 'Descuento por 10+', 'Argolla reforzada'],
@@ -334,10 +308,8 @@ export const products: Product[] = [
     blurb: 'Tablero con las figuras de la casa y ganchos.',
     description:
       'Tablero de madera con las figuras de quienes viven en la casa, apellido en relieve y ganchos metálicos. Regalo típico de estreno de departamento.',
-    priceFrom: 46,
+    priceFrom: 20,
     figuresIncluded: 2,
-    extraFigure: 11,
-    extraPet: 9,
     size: 'Tablero 30 × 15 cm',
     occasions: ['boda', 'nacimiento', 'madre'],
     highlights: ['Apellido en relieve', '4 ganchos metálicos', 'Listo para colgar'],
@@ -353,10 +325,8 @@ export const products: Product[] = [
     blurb: 'Figura con uniforme institucional y logo en relieve.',
     description:
       'Reconocimiento por años de servicio: figura con el uniforme de la empresa, logotipo modelado en relieve con los colores de marca y placa con nombre, cargo y fecha.',
-    priceFrom: 44,
+    priceFrom: 22.5,
     figuresIncluded: 1,
-    extraFigure: 12,
-    extraPet: 0,
     size: 'Base 12 × 8 cm',
     occasions: ['empresa', 'jubilacion'],
     highlights: ['Logotipo en relieve', 'Uniforme institucional', 'Desde 10 unidades'],
@@ -372,10 +342,8 @@ export const products: Product[] = [
     blurb: 'Producción por volumen con diseño unificado.',
     description:
       'Pedido de 10 a 200 piezas con un diseño base común y personalización individual por nombre. Cotización por volumen, cronograma de entrega y factura.',
-    priceFrom: 32,
+    priceFrom: 16,
     figuresIncluded: 1,
-    extraFigure: 10,
-    extraPet: 0,
     size: 'A definir según diseño',
     occasions: ['empresa'],
     highlights: ['Desde 10 unidades', 'Precio por volumen', 'Emitimos factura'],

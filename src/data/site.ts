@@ -39,7 +39,6 @@ export const waUrl = (message: string) =>
 
 export interface ShippingOption {
   zone: string
-  price: number
   eta: string
 }
 
@@ -48,17 +47,20 @@ export const logistics: {
   productionDays: string
   rushDays: string
   rushSurchargePct: number
+  /** El costo del envío no está aquí a propósito: depende del destino */
+  shippingNote: string
   shipping: ShippingOption[]
   depositPct: number
 } = {
   productionDays: '7 a 12 días laborables',
   rushDays: '3 a 5 días laborables',
   rushSurchargePct: 25,
+  shippingNote: 'El costo del envío depende del destino y se confirma por WhatsApp.',
   shipping: [
-    { zone: 'Quito (entrega a domicilio)', price: 3.5, eta: '24 a 48 horas' },
-    { zone: 'Guayaquil, Cuenca, Ambato y capitales', price: 5, eta: '2 a 3 días' },
-    { zone: 'Resto del país (Servientrega)', price: 6.5, eta: '3 a 5 días' },
-    { zone: 'Retiro en taller (Quito)', price: 0, eta: 'Coordinado por WhatsApp' },
+    { zone: 'Quito (entrega a domicilio)', eta: '24 a 48 horas' },
+    { zone: 'Guayaquil, Cuenca, Ambato y capitales', eta: '2 a 3 días' },
+    { zone: 'Resto del país (Servientrega)', eta: '3 a 5 días' },
+    { zone: 'Retiro en taller (Quito)', eta: 'Coordinado por WhatsApp' },
   ],
   depositPct: 50,
 }

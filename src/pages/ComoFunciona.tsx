@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
 import { faqs, logistics, site, steps, waUrl } from '../data/site'
-import { money } from '../lib/quote'
 
 const cuidados = [
   'Evita el sol directo por horas: los colores se pueden aclarar con el tiempo.',
@@ -109,7 +108,6 @@ export default function ComoFunciona() {
               <thead className="bg-clay-100 text-xs uppercase tracking-wider text-ink-500">
                 <tr>
                   <th className="px-5 py-3">Destino</th>
-                  <th className="px-5 py-3">Costo</th>
                   <th className="px-5 py-3">Tiempo</th>
                 </tr>
               </thead>
@@ -117,14 +115,14 @@ export default function ComoFunciona() {
                 {logistics.shipping.map((s) => (
                   <tr key={s.zone} className="border-t border-clay-200">
                     <td className="px-5 py-3 font-semibold text-ink-900">{s.zone}</td>
-                    <td className="px-5 py-3 tabular-nums font-bold text-brand-700">
-                      {s.price === 0 ? 'Sin costo' : money(s.price)}
-                    </td>
                     <td className="px-5 py-3 text-ink-500">{s.eta}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <p className="border-t border-clay-200 px-5 py-3 text-sm text-ink-500">
+              {logistics.shippingNote}
+            </p>
           </div>
 
           <div className="card p-7">

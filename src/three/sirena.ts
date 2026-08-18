@@ -1,287 +1,283 @@
 import * as THREE from 'three'
-import { crearCabeza } from './personaje'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 /**
- * Sirena completa construida desde cero: cabeza con la cara pintada, torso,
- * brazos y la cola tornasol del logo.
+ * Charmy, la sirena de la marca.
  *
- * La cola es una superficie paramétrica (anillos de radio decreciente a lo
- * largo de una curva) más dos lóbulos de aleta, con un shader propio: la onda
- * de nado ocurre en el vertex shader y las escamas iridiscentes se calculan en
- * el fragment shader, sin texturas.
+ * El modelo se esculpe y se pinta en Blender y se exporta a glTF binario con
+ * las texturas incrustadas (`public/modelos/sirena.glb`). Aquí se carga, se
+ * normaliza (centrado en el origen y alto 1, para que quien lo use lo escale
+ * con una sola cifra) y se le da vida moviendo los huesos del esqueleto que ya
+ * trae: la cadena de la cola ondula como una ola que viaja hacia la aleta, el
+ * cabello flota con retraso y los brazos cambian de pose según lo que Charmy
+ * esté diciendo.
  *
- * El grupo queda de pie: origen en la cintura, cola hacia abajo, cabeza arriba
- * y cara hacia +Z.
+ * El grupo queda de pie, mirando hacia +Z.
  */
 
-/** Construye una malla a partir de una función (u, v) → posición. */
-function construirMalla(
-  filas: number,
-  columnas: number,
-  fn: (u: number, v: number, destino: THREE.Vector3) => void,
-  avance: (u: number) => number,
-) {
-  const posiciones: number[] = []
-  const uvs: number[] = []
-  const avances: number[] = []
-  const indices: number[] = []
-  const p = new THREE.Vector3()
+const RUTA_MODELO = new URL(`${import.meta.env.BASE_URL}modelos/sirena.glb`, document.baseURI).href
 
-  for (let i = 0; i <= filas; i++) {
-    const u = i / filas
-    for (let j = 0; j <= columnas; j++) {
-      const v = j / columnas
-      fn(u, v, p)
-      posiciones.push(p.x, p.y, p.z)
-      uvs.push(u, v)
-      avances.push(avance(u))
-    }
-  }
+/** Vaivén lateral: girar sobre Z desplaza la punta en X */
+const EJE_VAIVEN = new THREE.Vector3(0, 0, 1)
+/** Flote adelante/atrás: girar sobre X desplaza la punta en Z */
+const EJE_FLOTE = new THREE.Vector3(1, 0, 0)
 
-  for (let i = 0; i < filas; i++) {
-    for (let j = 0; j < columnas; j++) {
-      const a = i * (columnas + 1) + j
-      const b = a + columnas + 1
-      indices.push(a, b, a + 1, b, b + 1, a + 1)
-    }
-  }
+/** Huesos del esqueleto original (nombres tal como salen del rig) */
+const COLA = ['waist_a_029', 'waist_b_030', 'waist_c_031', 'waist_d_032', 'waist_e_033', 'waist_f_034']
+const ALETAS = ['fin_L_035', 'fin_R_036']
+const CABELLO = ['hair_a_026', 'hair_b_027', 'hair_c_028']
+const BRAZO_IZQ = 'arm_L_a_06'
+const BRAZO_DER = 'arm_R_a_016'
+const CABEZA = 'head_025'
 
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(posiciones, 3))
-  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
-  geo.setAttribute('aAvance', new THREE.Float32BufferAttribute(avances, 1))
-  geo.setIndex(indices)
-  geo.computeVertexNormals()
-  return geo
+/**
+ * Poses de brazos y cabeza. Girando sobre +Z, un ángulo positivo sube el brazo
+ * izquierdo (+X) y baja el derecho (−X): de ahí los signos cruzados.
+ */
+export type Pose = 'nadando' | 'saludo' | 'presentar' | 'idea' | 'celebrar'
+
+interface Ajuste {
+  reposo: number
+  amplitud: number
+  velocidad?: number
 }
 
-/** Curva que recorre la cola, de la cintura a la aleta (en +X) */
-function puntoCurva(u: number, destino: THREE.Vector3) {
-  // curva en S: la cadera cae recta, el tramo medio se arquea y la punta
-  // vuelve, como una cola de sirena en pleno nado
-  destino.set(u * 2.95, Math.sin(u * Math.PI * 1.15) * 0.52 - u * 0.05, Math.sin(u * Math.PI) * 0.12)
+const POSES: Record<Pose, Record<string, Ajuste>> = {
+  // brazos caídos a los costados, respirando
+  nadando: {
+    [BRAZO_IZQ]: { reposo: -0.42, amplitud: 0.06, velocidad: 1.3 },
+    [BRAZO_DER]: { reposo: 0.42, amplitud: -0.06, velocidad: 1.3 },
+    [CABEZA]: { reposo: 0, amplitud: 0.035, velocidad: 0.9 },
+  },
+  // mano izquierda arriba, agitándose
+  saludo: {
+    [BRAZO_IZQ]: { reposo: 0.92, amplitud: 0.32, velocidad: 5.4 },
+    [BRAZO_DER]: { reposo: 0.34, amplitud: -0.05, velocidad: 1.3 },
+    [CABEZA]: { reposo: 0.11, amplitud: 0.05, velocidad: 1.6 },
+  },
+  // un brazo abierto, como mostrando algo
+  presentar: {
+    [BRAZO_IZQ]: { reposo: -0.12, amplitud: 0.09, velocidad: 1.5 },
+    [BRAZO_DER]: { reposo: 0.66, amplitud: -0.07, velocidad: 1.5 },
+    [CABEZA]: { reposo: -0.09, amplitud: 0.04, velocidad: 1.1 },
+  },
+  // mano cerca de la cara, cabeza inclinada
+  idea: {
+    [BRAZO_IZQ]: { reposo: 0.58, amplitud: 0.05, velocidad: 1.2 },
+    [BRAZO_DER]: { reposo: 0.2, amplitud: -0.04, velocidad: 1.2 },
+    [CABEZA]: { reposo: 0.15, amplitud: 0.03, velocidad: 0.8 },
+  },
+  // los dos brazos arriba
+  celebrar: {
+    [BRAZO_IZQ]: { reposo: 1.02, amplitud: 0.14, velocidad: 3.6 },
+    [BRAZO_DER]: { reposo: -1.02, amplitud: -0.14, velocidad: 3.6 },
+    [CABEZA]: { reposo: 0, amplitud: 0.08, velocidad: 2.4 },
+  },
 }
 
-/** Radio del cuerpo: ancho en la cadera, delgado antes de la aleta */
-function radio(u: number) {
-  return 0.5 * Math.pow(1 - u, 0.78) + 0.05
+/** Un hueso con su pose de reposo y el vaivén que se le suma encima */
+interface HuesoAnimado {
+  hueso: THREE.Object3D
+  base: THREE.Quaternion
+  eje: THREE.Vector3
+  /** Valores actuales: persiguen a los destino para que la pose no salte */
+  reposo: number
+  amplitud: number
+  velocidad: number
+  reposoDestino: number
+  amplitudDestino: number
+  velocidadDestino: number
+  /** Fase acumulada: así cambiar la velocidad no produce saltos */
+  fase: number
+  /** Cuánto crece la amplitud cuando el visitante hace scroll rápido */
+  respuesta: number
 }
-
-function cuerpoCola() {
-  const centro = new THREE.Vector3()
-  const siguiente = new THREE.Vector3()
-  const tangente = new THREE.Vector3()
-  const normal = new THREE.Vector3()
-  const binormal = new THREE.Vector3(0, 0, 1)
-
-  return construirMalla(
-    76,
-    28,
-    (u, v, destino) => {
-      puntoCurva(u, centro)
-      puntoCurva(Math.min(1, u + 0.01), siguiente)
-      tangente.subVectors(siguiente, centro).normalize()
-      normal.crossVectors(tangente, binormal).normalize()
-
-      const ang = v * Math.PI * 2
-      const r = radio(u)
-      destino
-        .copy(centro)
-        .addScaledVector(normal, Math.cos(ang) * r)
-        .addScaledVector(binormal, Math.sin(ang) * r * 0.74)
-    },
-    (u) => u,
-  )
-}
-
-/** Un lóbulo de la aleta */
-function loboAleta(direccion: number) {
-  const base = new THREE.Vector3()
-  puntoCurva(1, base)
-  const angulo = direccion * 0.75
-  const largo = 1.75
-
-  return construirMalla(
-    24,
-    16,
-    (u, v, destino) => {
-      const s = u
-      const w = (v - 0.5) * 2
-      const ancho = Math.pow(Math.sin(Math.min(1, s * 1.02) * Math.PI), 0.55) * 0.78 + 0.04
-
-      destino.set(
-        base.x + Math.cos(angulo) * s * largo - Math.abs(w) * 0.1,
-        base.y + Math.sin(angulo) * s * largo + w * ancho * 0.5,
-        w * ancho * 0.92 + Math.pow(s, 2) * w * 0.2,
-      )
-    },
-    (u) => 1 + u * 0.5,
-  )
-}
-
-const vertexShader = /* glsl */ `
-  uniform float uTiempo;
-  uniform float uEnergia;
-  attribute float aAvance;
-  varying float vAvance;
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vVista;
-
-  void main() {
-    vAvance = aAvance;
-    vUv = uv;
-
-    vec3 p = position;
-    float fase = aAvance * 3.0 - uTiempo * 2.3;
-    float amp = pow(aAvance, 1.8) * (0.14 + uEnergia * 0.2);
-    p.y += sin(fase) * amp;
-    p.z += cos(fase * 0.9) * amp * 0.4;
-
-    vec4 mv = modelViewMatrix * vec4(p, 1.0);
-    vNormal = normalize(normalMatrix * normal);
-    vVista = normalize(-mv.xyz);
-    gl_Position = projectionMatrix * mv;
-  }
-`
-
-const fragmentShader = /* glsl */ `
-  precision highp float;
-
-  uniform float uTiempo;
-  uniform float uOpacidad;
-  uniform vec3 cTurquesa;
-  uniform vec3 cLila;
-  uniform vec3 cRosa;
-  uniform vec3 cMenta;
-
-  varying float vAvance;
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vVista;
-
-  void main() {
-    vec3 n = normalize(vNormal);
-    float fresnel = pow(1.0 - max(dot(n, normalize(vVista)), 0.0), 2.2);
-
-    float t = fract(vAvance * 0.62 + fresnel * 0.4 + uTiempo * 0.035);
-    vec3 col = mix(cTurquesa, cLila, smoothstep(0.0, 0.34, t));
-    col = mix(col, cRosa, smoothstep(0.34, 0.62, t));
-    col = mix(col, cMenta, smoothstep(0.62, 0.9, t));
-    col = mix(col, cTurquesa, smoothstep(0.9, 1.0, t));
-
-    // escamas: celdas grandes, con borde oscuro y brillo arriba
-    vec2 rejilla = vec2(vUv.x * 14.0, vUv.y * 8.0);
-    rejilla.y += step(1.0, mod(floor(rejilla.x), 2.0)) * 0.5;
-    vec2 celda = fract(rejilla) - 0.5;
-    float d = length(celda * vec2(1.0, 1.15));
-    float cuerpoEscama = smoothstep(0.5, 0.42, d);
-    float borde = smoothstep(0.52, 0.44, d) - smoothstep(0.44, 0.36, d);
-    col *= 0.9 + 0.2 * cuerpoEscama;
-    col -= borde * 0.22;
-    col += smoothstep(0.2, 0.0, length((celda - vec2(0.0, 0.16)) * vec2(1.0, 1.6))) * 0.28;
-
-    float luz = 0.6 + 0.4 * max(dot(n, normalize(vec3(0.35, 0.85, 0.55))), 0.0);
-    col *= luz;
-    col += fresnel * vec3(0.55, 0.75, 0.95) * 0.45;
-
-    gl_FragColor = vec4(col, uOpacidad);
-  }
-`
 
 export interface Sirena {
   grupo: THREE.Group
-  material: THREE.ShaderMaterial
-  /** Alto total del modelo en unidades locales, para escalarlo desde afuera */
+  /** Alto del modelo ya normalizado: siempre 1, el tamaño se pone desde afuera */
   alto: number
+  /** Medio ancho del modelo, en las mismas unidades que `alto` */
+  medioAncho: number
+  /** Cambia la pose de brazos y cabeza; la transición es progresiva */
+  pose: (nombre: Pose) => void
+  /** Anima cola, cabello y brazos. `energia` 0..1 = intensidad del aleteo */
+  actualizar: (t: number, energia: number) => void
   liberar: () => void
 }
 
-export function crearSirena(): Sirena {
-  const material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    transparent: true,
-    side: THREE.DoubleSide,
-    uniforms: {
-      uTiempo: { value: 0 },
-      uEnergia: { value: 0 },
-      uOpacidad: { value: 1 },
-      cTurquesa: { value: new THREE.Color('#5fd7ef') },
-      cLila: { value: new THREE.Color('#b79bf0') },
-      cRosa: { value: new THREE.Color('#f8bcdb') },
-      cMenta: { value: new THREE.Color('#a5e7d2') },
-    },
+/**
+ * Expresa un eje del modelo en el espacio del padre del hueso, que es donde
+ * three.js aplica `hueso.quaternion`. Se calcula una sola vez, en la pose de
+ * reposo: el vaivén es pequeño y no vale la pena recalcularlo por cuadro.
+ */
+function ejeEnPadre(hueso: THREE.Object3D, raiz: THREE.Object3D, ejeRaiz: THREE.Vector3) {
+  const padre = hueso.parent ?? raiz
+  const m = new THREE.Matrix4().copy(raiz.matrixWorld).invert().multiply(padre.matrixWorld)
+  const pos = new THREE.Vector3()
+  const rot = new THREE.Quaternion()
+  const esc = new THREE.Vector3()
+  m.decompose(pos, rot, esc)
+  return ejeRaiz.clone().applyQuaternion(rot.invert()).normalize()
+}
+
+export async function crearSirena(): Promise<Sirena> {
+  const gltf = await new GLTFLoader().loadAsync(RUTA_MODELO)
+  const modelo = gltf.scene
+
+  const geometrias = new Set<THREE.BufferGeometry>()
+  const materiales = new Set<THREE.Material>()
+
+  modelo.traverse((o) => {
+    const malla = o as THREE.Mesh
+    if (!malla.isMesh) return
+
+    // Las mallas con esqueleto se deforman fuera de su caja original: sin esto
+    // desaparecen al acercarse al borde de la pantalla.
+    malla.frustumCulled = false
+    geometrias.add(malla.geometry)
+
+    for (const mat of Array.isArray(malla.material) ? malla.material : [malla.material]) {
+      materiales.add(mat)
+      const std = mat as THREE.MeshStandardMaterial
+      if (!std.isMeshStandardMaterial) continue
+      std.metalness = 0
+      std.roughness = 0.62
+      if (std.map) std.map.anisotropy = 4
+      // Ojos y boca son planos pegados a la cara: sin sesgo parpadean contra ella
+      if (/eye|mouth/i.test(std.name)) {
+        std.polygonOffset = true
+        std.polygonOffsetFactor = -2
+        std.polygonOffsetUnits = -2
+      }
+    }
   })
 
-  const geometrias: THREE.BufferGeometry[] = []
-  const materiales: THREE.Material[] = [material]
-
-  const nuevoMat = (o: THREE.MeshStandardMaterialParameters) => {
-    const m = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.05, ...o })
-    materiales.push(m)
-    return m
-  }
-
-  const matPiel = nuevoMat({ color: '#f3cfae' })
-  const matConcha = nuevoMat({ color: '#8fdff0', roughness: 0.25, metalness: 0.2 })
+  // ---------- normalizar: centrado en el origen y alto 1 ----------
+  const caja = new THREE.Box3().setFromObject(modelo)
+  const medida = caja.getSize(new THREE.Vector3())
+  const centro = caja.getCenter(new THREE.Vector3())
+  const escala = 1 / medida.y
 
   const grupo = new THREE.Group()
+  const pivote = new THREE.Group()
+  pivote.scale.setScalar(escala)
+  pivote.position.copy(centro).multiplyScalar(-escala)
+  pivote.add(modelo)
+  grupo.add(pivote)
+  grupo.updateMatrixWorld(true)
 
-  // ---------- cola (apunta hacia abajo) ----------
-  const cola = new THREE.Group()
-  for (const g of [cuerpoCola(), loboAleta(1), loboAleta(-1)]) {
-    geometrias.push(g)
-    cola.add(new THREE.Mesh(g, material))
-  }
-  cola.rotation.z = -Math.PI / 2 // el eje +X del modelo pasa a mirar hacia abajo
-  grupo.add(cola)
-
-  const agregar = (geo: THREE.BufferGeometry, mat: THREE.Material, pos: [number, number, number]) => {
-    geometrias.push(geo)
-    const m = new THREE.Mesh(geo, mat)
-    m.position.set(...pos)
-    grupo.add(m)
-    return m
-  }
-
-  // ---------- torso ----------
-  const torso = agregar(new THREE.CapsuleGeometry(0.34, 0.55, 10, 24), matPiel, [0, 0.42, 0])
-  torso.scale.set(1, 1, 0.82)
-
-  // top de conchas
-  for (const lado of [-1, 1]) {
-    const concha = agregar(new THREE.SphereGeometry(0.21, 20, 16), matConcha, [lado * 0.19, 0.6, 0.2])
-    concha.scale.set(1, 0.85, 0.62)
-  }
-
-  // ---------- brazos ----------
-  for (const lado of [-1, 1]) {
-    const brazo = agregar(new THREE.CapsuleGeometry(0.11, 0.5, 8, 16), matPiel, [lado * 0.42, 0.5, 0.02])
-    brazo.rotation.z = lado * 0.22
-    agregar(new THREE.SphereGeometry(0.12, 16, 12), matPiel, [lado * 0.55, 0.18, 0.04])
-  }
-
-  // ---------- cabeza ----------
-  const cabeza = crearCabeza({
-    piel: '#f3cfae',
-    ojos: '#7a6bb5',
-    cabello: '#8f6fd8',
-    peinado: 'largo',
-    estilo: 'ella',
+  // ---------- huesos ----------
+  const huesos = new Map<string, THREE.Object3D>()
+  modelo.traverse((o) => {
+    if ((o as THREE.Bone).isBone) huesos.set(o.name, o)
   })
-  cabeza.grupo.scale.setScalar(0.56)
-  cabeza.grupo.position.set(0, 1.28, 0)
-  grupo.add(cabeza.grupo)
+  /** El exportador puede sanear nombres; se acepta también el prefijo */
+  const buscar = (nombre: string) =>
+    huesos.get(nombre) ?? [...huesos.values()].find((h) => h.name.startsWith(nombre))
+
+  const animados: HuesoAnimado[] = []
+  const porNombre = new Map<string, HuesoAnimado>()
+
+  const animar = (
+    nombre: string,
+    eje: THREE.Vector3,
+    opciones: { reposo?: number; amplitud: number; fase: number; velocidad: number; respuesta?: number },
+  ) => {
+    const hueso = buscar(nombre)
+    if (!hueso) return
+    const a: HuesoAnimado = {
+      hueso,
+      base: hueso.quaternion.clone(),
+      eje: ejeEnPadre(hueso, modelo, eje),
+      reposo: opciones.reposo ?? 0,
+      amplitud: opciones.amplitud,
+      velocidad: opciones.velocidad,
+      reposoDestino: opciones.reposo ?? 0,
+      amplitudDestino: opciones.amplitud,
+      velocidadDestino: opciones.velocidad,
+      fase: opciones.fase,
+      respuesta: opciones.respuesta ?? 1,
+    }
+    animados.push(a)
+    porNombre.set(nombre, a)
+  }
+
+  // Cola: la onda nace en la cintura y viaja hacia la aleta, creciendo
+  COLA.forEach((nombre, i) => {
+    animar(nombre, EJE_VAIVEN, {
+      amplitud: 0.045 + i * 0.026,
+      fase: -i * 0.62,
+      velocidad: 2.6,
+      respuesta: 1.4,
+    })
+  })
+  // La aleta cierra la onda, medio ciclo más tarde
+  ALETAS.forEach((nombre, i) => {
+    animar(nombre, EJE_VAIVEN, { amplitud: 0.14, fase: -3.9 + i * 0.15, velocidad: 2.6, respuesta: 1.4 })
+  })
+  // Cabello: flota más lento y más suelto, como bajo el agua
+  CABELLO.forEach((nombre, i) => {
+    animar(nombre, EJE_FLOTE, { amplitud: 0.06 + i * 0.02, fase: -i * 0.8, velocidad: 1.05, respuesta: 0.6 })
+  })
+  // Brazos y cabeza: arrancan en la pose de nado y los mueve `pose()`
+  for (const [nombre, ajuste] of Object.entries(POSES.nadando)) {
+    animar(nombre, EJE_VAIVEN, {
+      reposo: ajuste.reposo,
+      amplitud: ajuste.amplitud,
+      fase: 0,
+      velocidad: ajuste.velocidad ?? 1.3,
+      respuesta: 0.4,
+    })
+  }
+
+  const pose = (nombre: Pose) => {
+    for (const [hueso, ajuste] of Object.entries(POSES[nombre])) {
+      const a = porNombre.get(hueso)
+      if (!a) continue
+      a.reposoDestino = ajuste.reposo
+      a.amplitudDestino = ajuste.amplitud
+      a.velocidadDestino = ajuste.velocidad ?? a.velocidad
+    }
+  }
+
+  const giro = new THREE.Quaternion()
+  let ultimoT = 0
+
+  const actualizar = (t: number, energia: number) => {
+    const dt = Math.min(0.05, Math.max(0, t - ultimoT))
+    ultimoT = t
+    const fuerza = Math.min(1, Math.max(0, energia))
+    // Suavizado independiente de los FPS: media transición en ~0.15 s
+    const suavizado = 1 - Math.exp(-dt * 4.5)
+
+    for (const a of animados) {
+      a.reposo += (a.reposoDestino - a.reposo) * suavizado
+      a.amplitud += (a.amplitudDestino - a.amplitud) * suavizado
+      a.velocidad += (a.velocidadDestino - a.velocidad) * suavizado
+      a.fase += dt * a.velocidad
+
+      const angulo = a.reposo + Math.sin(a.fase) * a.amplitud * (1 + fuerza * a.respuesta)
+      giro.setFromAxisAngle(a.eje, angulo)
+      a.hueso.quaternion.copy(a.base).premultiply(giro)
+    }
+  }
+  actualizar(0, 0)
 
   return {
     grupo,
-    material,
-    alto: 6.25, // medido: de la punta de la aleta (-4.23) a la coronilla (+2.01)
+    alto: 1,
+    medioAncho: (medida.x * escala) / 2,
+    pose,
+    actualizar,
     liberar: () => {
-      cabeza.liberar()
       for (const g of geometrias) g.dispose()
-      for (const m of materiales) m.dispose()
+      for (const m of materiales) {
+        for (const valor of Object.values(m as unknown as Record<string, unknown>)) {
+          if (valor && (valor as THREE.Texture).isTexture) (valor as THREE.Texture).dispose()
+        }
+        m.dispose()
+      }
     },
   }
 }

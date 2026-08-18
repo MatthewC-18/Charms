@@ -5,9 +5,9 @@ import Mascota from '../components/Mascota'
 import Muneco3D, { coloresIniciales, describirColores, type ColoresMuneco } from '../components/Muneco3D'
 import { categories, products } from '../data/products'
 import { logistics, occasions, site, waUrl } from '../data/site'
-import { addOns, buildQuote, money, quoteToMessage, volumeDiscountPct } from '../lib/quote'
+import { buildQuote, money, quoteToMessage, volumeDiscountPct } from '../lib/quote'
 
-const stepLabels = ['Pieza', 'Figuras', 'Extras', 'Datos']
+const stepLabels = ['Pieza', 'Figuras', 'Entrega', 'Datos']
 
 function Counter({
   label,
@@ -66,7 +66,6 @@ export default function Personalizar() {
   const [figures, setFigures] = useState(initial.figuresIncluded)
   const [pets, setPets] = useState(0)
   const [units, setUnits] = useState(1)
-  const [addOnIds, setAddOnIds] = useState<string[]>([])
   const [rush, setRush] = useState(false)
   const [shippingZone, setShippingZone] = useState(logistics.shipping[0].zone)
 
@@ -76,14 +75,15 @@ export default function Personalizar() {
   const [deadline, setDeadline] = useState('')
   const [notes, setNotes] = useState('')
 
-  const input = { product, figures, pets, addOnIds, rush, shippingZone, units }
-  const quote = useMemo(() => buildQuote(input), [product, figures, pets, addOnIds, rush, shippingZone, units])
+  const input = { product, figures, pets, rush, units }
+  const quote = useMemo(() => buildQuote(input), [product, figures, pets, rush, units])
 
   const message = quoteToMessage(input, quote, {
     name,
     occasion,
     deadline,
     notes,
+    shippingZone,
     apariencia: describirColores(colores),
   })
   const discountPct = volumeDiscountPct(units)
@@ -92,11 +92,7 @@ export default function Personalizar() {
     const p = products.find((x) => x.id === id)!
     setProductId(id)
     setFigures(p.figuresIncluded)
-    if (p.extraPet === 0) setPets(0)
   }
-
-  const toggleAddOn = (id: string) =>
-    setAddOnIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
 
   return (
     <>
@@ -197,8 +193,8 @@ export default function Personalizar() {
               <h2 className="text-2xl">2. ¿Cuántas figuras van?</h2>
               <p className="mt-1 text-sm text-ink-500">
                 {product.name} incluye {product.figuresIncluded}{' '}
-                {product.figuresIncluded === 1 ? 'figura' : 'figuras'}. Cada figura adicional cuesta{' '}
-                {money(product.extraFigure)}.
+                {product.figuresIncluded === 1 ? 'figura' : 'figuras'} en el precio desde{' '}
+                {money(product.priceFrom)}. Las figuras adicionales se cotizan aparte, con el boceto.
               </p>
 
               <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
@@ -222,16 +218,14 @@ export default function Personalizar() {
                   max={10}
                   onChange={setFigures}
                 />
-                {product.extraPet > 0 && (
-                  <Counter
-                    label="Mascotas"
-                    hint={`Perros, gatos u otros · ${money(product.extraPet)} c/u`}
-                    value={pets}
-                    min={0}
-                    max={6}
-                    onChange={setPets}
-                  />
-                )}
+                <Counter
+                  label="Mascotas"
+                  hint="Perros, gatos u otros · se cotizan aparte"
+                  value={pets}
+                  min={0}
+                  max={6}
+                  onChange={setPets}
+                />
                 <Counter
                   label="Cantidad de piezas iguales"
                   hint={
@@ -261,31 +255,8 @@ export default function Personalizar() {
           {/* PASO 3 */}
           {step === 3 && (
             <div>
-              <h2 className="text-2xl">3. Detalles que hacen la diferencia</h2>
-              <p className="mt-1 text-sm text-ink-500">Todos son opcionales.</p>
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {addOns.map((a) => {
-                  const active = addOnIds.includes(a.id)
-                  return (
-                    <button
-                      key={a.id}
-                      type="button"
-                      onClick={() => toggleAddOn(a.id)}
-                      className={`flex items-start justify-between gap-3 rounded-2xl border-2 p-4 text-left transition ${
-                        active ? 'border-brand-500 bg-brand-50' : 'border-clay-200 bg-white hover:border-brand-300'
-                      }`}
-                      aria-pressed={active}
-                    >
-                      <span>
-                        <span className="block font-bold text-ink-900">{a.label}</span>
-                        {a.hint && <span className="block text-xs text-ink-500">{a.hint}</span>}
-                      </span>
-                      <span className="shrink-0 font-extrabold text-brand-700">+{money(a.price)}</span>
-                    </button>
-                  )
-                })}
-              </div>
+              <h2 className="text-2xl">3. Entrega</h2>
+              <p className="mt-1 text-sm text-ink-500">{logistics.shippingNote}</p>
 
               <div className="mt-5 grid gap-3">
                 <button
@@ -317,10 +288,13 @@ export default function Personalizar() {
                   >
                     {logistics.shipping.map((s) => (
                       <option key={s.zone} value={s.zone}>
-                        {s.zone} — {s.price === 0 ? 'sin costo' : money(s.price)} · {s.eta}
+                        {s.zone} — {s.eta}
                       </option>
                     ))}
                   </select>
+                  <p className="mt-2 text-xs text-ink-500">
+                    El valor del envío se confirma por WhatsApp según el destino.
+                  </p>
                 </div>
               </div>
 
@@ -457,11 +431,19 @@ export default function Personalizar() {
                     <span className="shrink-0 font-bold tabular-nums">{money(quote.rushFee)}</span>
                   </li>
                 )}
+                {(quote.extraFigures > 0 || pets > 0) && (
+                  <li className="flex justify-between gap-3 text-ink-500">
+                    <span>
+                      {quote.extraFigures > 0 && `${quote.extraFigures} figura(s) extra`}
+                      {quote.extraFigures > 0 && pets > 0 && ' · '}
+                      {pets > 0 && `${pets} mascota(s)`}
+                    </span>
+                    <span className="shrink-0 font-bold">Se cotiza aparte</span>
+                  </li>
+                )}
                 <li className="flex justify-between gap-3 text-ink-700">
                   <span>Envío</span>
-                  <span className="shrink-0 font-bold tabular-nums">
-                    {quote.shipping === 0 ? 'Sin costo' : money(quote.shipping)}
-                  </span>
+                  <span className="shrink-0 font-bold">Según destino</span>
                 </li>
               </ul>
 
@@ -477,7 +459,7 @@ export default function Personalizar() {
                 <Icon name="whatsapp" className="h-5 w-5" /> Enviar por WhatsApp
               </a>
               <p className="mt-3 text-center text-[0.7rem] leading-relaxed text-ink-500">
-                Valor referencial. El precio final se confirma con el boceto aprobado.{' '}
+                Valor referencial, sin envío. El precio final se confirma con el boceto aprobado.{' '}
                 <Link to="/como-funciona" className="font-bold text-brand-600">
                   Ver condiciones
                 </Link>

@@ -101,14 +101,8 @@ export default function Producto() {
               ))}
               <li className="flex items-start gap-2 text-sm text-ink-700">
                 <Icon name="check" className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brand-600" />
-                Figura adicional: {money(product.extraFigure)}
+                Figuras y mascotas adicionales: se cotizan con el boceto
               </li>
-              {product.extraPet > 0 && (
-                <li className="flex items-start gap-2 text-sm text-ink-700">
-                  <Icon name="check" className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brand-600" />
-                  Mascota adicional: {money(product.extraPet)}
-                </li>
-              )}
             </ul>
 
             <div className="mt-7 flex flex-wrap gap-3">

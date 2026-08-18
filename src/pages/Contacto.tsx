@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Mascota from '../components/Mascota'
-import { logistics, site, waUrl } from '../data/site'
+import { site, waUrl } from '../data/site'
 
 export default function Contacto() {
   const [form, setForm] = useState({ nombre: '', ciudad: '', mensaje: '' })
@@ -153,7 +153,7 @@ export default function Contacto() {
             <ul className="mt-2 space-y-1.5 text-sm text-brand-900/80">
               <li>· Las fotos de las personas y mascotas.</li>
               <li>· La fecha en que necesitas la pieza.</li>
-              <li>· La ciudad de entrega (envíos desde {logistics.shipping[0].price === 0 ? 'gratis' : '$3.50'}).</li>
+              <li>· La ciudad de entrega (el envío se cotiza según el destino).</li>
             </ul>
           </div>
         </div>
